@@ -6,15 +6,15 @@ import atexit
 import RPi.GPIO as GPIO
 import datetime
 
-prog_version=1.2
+prog_version=1.3
 prog_name="Custom Pi-Litterbox Robot"
 mode = GPIO.getmode()
 
 #GPIO.setmode(GPIO.BOARD)
 GPIO.setmode(GPIO.BCM)
 
-GPIO_PIR=27#23#sensor detection for dump hole
-GPIO_PIR2=22#sensor detection for Shift Hole
+GPIO_PIR=27#23#sensor detection for Home
+GPIO_PIR2=22#sensor detection for Dump Hole
 
 GPIO.setup(GPIO_PIR2, GPIO.IN)#setup Shift hole
 
@@ -32,6 +32,7 @@ current_datetime=datetime.date.today()
 #datetime.datetime.now()
 next_run_datetime=datetime.datetime(2021, 7, 12, 9, 55, 0, 342380)
 #next_run_time=datetime.time(hour = 20, minute = 45, second = 0)
+
 curDir=0#-1=reverse,0=stopped,1=forward
 curPos=-1#Unknown=-1,Home=0,Dump=1
 curDest=1#Unknown=-1,Home=0,Dump=1
@@ -43,7 +44,7 @@ dump_time=20#in secs
 #datetime.datetime(2020, 5, 17)
 
 # create a default object, no changes to I2C address or frequency
-mh = Raspi_MotorHAT(addr=0x6f)
+mh = Raspi_MotorHAT(addr=0x6f)#default address: 0x6f
 
 #initialize motor
 myMotor = mh.getMotor(2)
@@ -183,8 +184,16 @@ def countDown(num):
     for i in range(num):
         time.sleep(1)
         print(str(i+1))
-    
 
+def scaleTiming(time,speed)
+	##speed range 1-255 (units=?)
+	##speed=0 is stopped
+	maxSpeed=255
+	minSpeed=1
+	print("scale "+str(time)+" Seconds for "+str(speed)+" Speed")
+	print("Percentage Max speed is "+str((speed/maxSpeed)*100))
+	return (time*(maxSpeed/speed))#reverse scales percentage to get time delay based on speed
+	
 #title screen
 print("---------------------------------")
 print("-"+prog_name+" "+str(prog_version)+"  -")
@@ -226,9 +235,6 @@ while (flag):
                 print("Cycle "+str(cycle_count)+" of "+str(cycle_num_max))
                 cycle_count=cycle_count+1
                 curDest=-1
-            #counter=3minutes=numInterval_Hours))#
-            #counter2=3
-    #print("Date:"+str(current_datetime.today().strftime('%Y-%m-%d-%H:%M')))
-    #print(str(flagDir1)+" "+str(flagDir2))
+            
 	
 print("Exiting- Goodbye!")
