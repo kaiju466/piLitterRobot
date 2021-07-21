@@ -21,8 +21,8 @@ GPIO_PIR2=22#sensor detection for Dump
 
 GPIO.setup(GPIO_PIR2, GPIO.IN)#setup Dump
 
-counter=1
-counter2=1
+#counter=1
+#counter2=1
 
 cycle_count=1
 cycle_num_max=4
@@ -118,6 +118,7 @@ def move2Home():
     else:
         motorForward()
 
+#moves globe to shift waste from litter and dump
 def move2Dump():
     print("Preparing to Dump")
     global curDest
@@ -131,18 +132,33 @@ def move2Dump():
         motorReverse()
     #print("Finished!")
     #print("Next run date/time:"+str(next_run_datetime))
+        
+#moves globe to completely dump litter
+def move2FullDump():
+    print("Preparing to Full Dump")
+    global curDest
+    #print(str(curPos))
+    if curPos==0:
+        curDest=1
+        motorReverse()
+    elif curPos==-1:
+        motorReverse()
+    else:
+        motorForward()
+    #print("Finished!")
+    #print("Next run date/time:"+str(next_run_datetime))
     
-#HallEffect Sensor Test
+#HallEffect Sensor functions
 GPIO.setup(GPIO_PIR,GPIO.IN,pull_up_down=GPIO.PUD_UP)
 def printDumpDetected(GPIO_PIR):
     global curPos,lastDir
     #print(str(sflag))
     if curDest==1 and curDir==1 and curPos!=1:
-        global counter
+        #global counter
         curPos=1
         lastDir=curDir
         #print("printDumpDetected "+str(counter)+" "+str(lastDir))
-        counter=counter+1
+        #counter=counter+1
         motorStop()
         print("Reached Dump")
         #print("Stop")
@@ -163,10 +179,10 @@ def printHomeDetected(GPIO_PIR2):
     global curPos,lastDir
     #print(str(sflag))
     if curDest==0 and curDir==-1 and curPos!=0:
-        global counter2
+        #global counter2
         lastDir=curDir
         #print("printHomeDetected "+str(counter2)+" "+str(lastDir))
-        counter2=counter2+1
+        #counter2=counter2+1
         #motorStop()
         #print("Stop")
         time.sleep(scaleTiming(3.00,motorSpeed))#time.sleep(3.00)
@@ -181,6 +197,7 @@ def printHomeDetected(GPIO_PIR2):
         
 GPIO.add_event_detect(GPIO_PIR2,GPIO.RISING,callback=printHomeDetected)
 
+#Manual Interaction Functions
 #def manualOverride:
 #    print("Manual Override Detected")
 #    print("Run Cycle")
@@ -189,13 +206,18 @@ GPIO.add_event_detect(GPIO_PIR2,GPIO.RISING,callback=printHomeDetected)
 
 #GPIO.add_event_detect(GPIO_OverRide,GPIO.RISING,callback=manualOverride)
 
+#code for enabling ircontrol of box
+#def irOverride:
+#    print("IR Override Detected")
+
+#Misc functions
 def countDown(num):
     print("waiting for "+str(num)+"secs")
     for i in range(num):
         time.sleep(1)
         print(str(i+1))
 
-def scaleTiming(time,speed)
+def scaleTiming(time,speed):
     ##speed range 1-255 (units=?)
     ##speed=0 is stopped
     maxSpeed=255
@@ -204,7 +226,8 @@ def scaleTiming(time,speed)
     print("Percentage Max speed is "+str((speed/maxSpeed)*100))
     return (time*(maxSpeed/speed))#reverse scales percentage to get time delay based on speed
     
-#title screen
+
+#Title Screen
 print("---------------------------------")
 print("-"+prog_name+" "+str(prog_version)+"  -")
 print("-Date:"+current_datetime.today().strftime('%Y-%h-%d')+"               -")
