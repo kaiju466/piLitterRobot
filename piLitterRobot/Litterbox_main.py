@@ -6,7 +6,7 @@ import atexit
 import RPi.GPIO as GPIO
 import datetime
 
-prog_version=1.3
+prog_version=1.4
 prog_name="Custom Pi-Litterbox Robot"
 mode = GPIO.getmode()
 
