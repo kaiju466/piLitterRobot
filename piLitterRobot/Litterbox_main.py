@@ -16,6 +16,8 @@ GPIO.setmode(GPIO.BCM)
 GPIO_PIR=27#23#sensor detection for Home
 GPIO_PIR2=22#sensor detection for Dump
 
+#GPIO_OverRide=#button used for manual run
+
 GPIO.setup(GPIO_PIR2, GPIO.IN)#setup Dump
 
 counter=1
@@ -178,6 +180,13 @@ def printHomeDetected(GPIO_PIR2):
         
 GPIO.add_event_detect(GPIO_PIR2,GPIO.RISING,callback=printHomeDetected)
 
+#def manualOverride:
+#    print("Manual Override Detected")
+#    print("Run Cycle")
+#    cycle_num_max=cycle_num_max+1
+#    next_run_datetime=datetime.datetime.now()
+
+#GPIO.add_event_detect(GPIO_OverRide,GPIO.RISING,callback=manualOverride)
 
 def countDown(num):
     print("waiting for "+str(num)+"secs")
