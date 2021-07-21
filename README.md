@@ -15,4 +15,4 @@ Parts list:
   GeekWorm PiMotorHat
   
   
-Note: Current Hardware interation is a prototype and majority of parts are in a separate plastic case due to limited space in the existing hardware.
+Note: Current Hardware itteration is a prototype and majority of parts are in a separate plastic case due to limited space in the existing hardware.
