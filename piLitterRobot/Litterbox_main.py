@@ -43,6 +43,10 @@ curDest=1#Unknown=-1,Home=0,Dump=1
 numInterval_Hours=6
 dump_time=20#in secs
 
+#GPIO.setup(4, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+#cb = ButtonHandler(4, real_cb, edge='rising', bouncetime=100)
+#cb.start()
+#GPIO.add_event_detect(4, GPIO.RISING, callback=cb)
 
 #datetime.datetime(2020, 5, 17)
 
