@@ -14,9 +14,9 @@ mode = GPIO.getmode()
 GPIO.setmode(GPIO.BCM)
 
 GPIO_PIR=27#23#sensor detection for Home
-GPIO_PIR2=22#sensor detection for Dump Hole
+GPIO_PIR2=22#sensor detection for Dump
 
-GPIO.setup(GPIO_PIR2, GPIO.IN)#setup Shift hole
+GPIO.setup(GPIO_PIR2, GPIO.IN)#setup Dump
 
 counter=1
 counter2=1
@@ -49,8 +49,8 @@ mh = Raspi_MotorHAT(addr=0x6f)#default address: 0x6f
 #initialize motor
 myMotor = mh.getMotor(2)
 motorSpeed=50#250#150
-#flagDir1=myMotor.IN1pin
-#flagDir2=myMotor.IN2pin
+
+
 # recommended for auto-disabling motors on shutdown!
 def turnOffMotors():
     global curDir
@@ -166,9 +166,9 @@ def printHomeDetected(GPIO_PIR2):
         counter2=counter2+1
         #motorStop()
         #print("Stop")
-        time.sleep(3.00)
+        time.sleep(scaleTiming(3.00,motorSpeed))#time.sleep(3.00)
         reverseCurMotorDir(lastDir)
-        time.sleep(2.00)
+        time.sleep(scaleTiming(2.00,motorSpeed))#time.sleep(2.00)
         motorStop()
         curPos=0
         print("Reached Home")
@@ -186,14 +186,14 @@ def countDown(num):
         print(str(i+1))
 
 def scaleTiming(time,speed)
-	##speed range 1-255 (units=?)
-	##speed=0 is stopped
-	maxSpeed=255
-	minSpeed=1
-	print("scale "+str(time)+" Seconds for "+str(speed)+" Speed")
-	print("Percentage Max speed is "+str((speed/maxSpeed)*100))
-	return (time*(maxSpeed/speed))#reverse scales percentage to get time delay based on speed
-	
+    ##speed range 1-255 (units=?)
+    ##speed=0 is stopped
+    maxSpeed=255
+    minSpeed=1
+    print("scale "+str(time)+" Seconds for "+str(speed)+" Speed")
+    print("Percentage Max speed is "+str((speed/maxSpeed)*100))
+    return (time*(maxSpeed/speed))#reverse scales percentage to get time delay based on speed
+    
 #title screen
 print("---------------------------------")
 print("-"+prog_name+" "+str(prog_version)+"  -")
@@ -236,5 +236,6 @@ while (flag):
                 cycle_count=cycle_count+1
                 curDest=-1
             
-	
+    
 print("Exiting- Goodbye!")
+
