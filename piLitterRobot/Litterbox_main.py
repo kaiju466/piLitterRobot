@@ -17,6 +17,7 @@ GPIO_PIR=27#23#sensor detection for Home
 GPIO_PIR2=22#sensor detection for Dump
 
 #GPIO_OverRide=#button used for manual run
+#GPIO_STATLIGHT=#led used to indicate finished status and issues# Blick=issue,On=Done,Off=Ok
 
 GPIO.setup(GPIO_PIR2, GPIO.IN)#setup Dump
 
