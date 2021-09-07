@@ -203,6 +203,7 @@ def printHomeDetected(GPIO_PIR2):
 GPIO.add_event_detect(GPIO_PIR2,GPIO.RISING,callback=printHomeDetected)
 
 #pinch Sensor
+#note:needs to be quick and disable device to avoid further issue. Possible error message to be sent to cell
 def pinchDetected(GPIO_Pinch):
     global curPos, lastDir
     #if curDest == 1 and curDir == -1 and curPos != 1:
