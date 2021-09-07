@@ -15,6 +15,7 @@ GPIO.setmode(GPIO.BCM)
 
 GPIO_PIR=27#23#sensor detection for Home
 GPIO_PIR2=22#sensor detection for Dump
+GPIO_Pinch=24#Pinch Sensor
 
 #GPIO_OverRide=#button used for manual run
 #GPIO_STATLIGHT=#led used to indicate finished status and issues# Blick=issue,On=Done,Off=Ok
@@ -200,6 +201,16 @@ def printHomeDetected(GPIO_PIR2):
             print("Not Stopping at Home, heading to Dump")
         
 GPIO.add_event_detect(GPIO_PIR2,GPIO.RISING,callback=printHomeDetected)
+
+#pinch Sensor
+def pinchDetected(GPIO_Pinch):
+    global curPos, lastDir
+    #if curDest == 1 and curDir == -1 and curPos != 1:
+        reverseCurMotorDir(lastDir)
+        time.sleep(scaleTiming(1.00, motorSpeed))  # time.sleep(2.00)
+        turnOffMotors()
+    #else:
+GPIO.add_event_detect(GPIO_Pinch,GPIO.RISING,callback=pinchDetected)
 
 #Manual Interaction Functions
 #def manualOverride:
