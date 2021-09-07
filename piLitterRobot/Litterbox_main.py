@@ -6,6 +6,18 @@ import atexit
 import RPi.GPIO as GPIO
 import datetime
 
+# Import smtplib for the actual sending function
+import smtplib
+
+# Import the email modules we'll need
+from email.message import EmailMessage
+
+msg = EmailMessage()
+msg.set_content('test')
+msg['Subject'] = 'piLitterRobot Notification'
+msg['From'] = 'pilitterRobot@gmail.com'
+msg['To'] = 'kaiju466@gmail.com'
+
 prog_version=1.4
 prog_name="Custom Pi-Litterbox Robot"
 mode = GPIO.getmode()
@@ -230,6 +242,11 @@ def scaleTiming(time,speed):
     print("Percentage Max speed is "+str((speed/maxSpeed)*100))
     return (time*(maxSpeed/speed))#reverse scales percentage to get time delay based on speed
     
+def notify():
+    #method for sending emails/text to specified people regarding varios state changes of the pilitterrobot
+    s = smtplib.SMTP('localhost')#need to add address for google smtp
+    s.send_message(msg)
+    s.quit()
 
 #Title Screen
 print("---------------------------------")
