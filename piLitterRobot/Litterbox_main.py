@@ -10,13 +10,24 @@ import datetime
 import smtplib
 
 # Import the email modules we'll need
-from email.message import EmailMessage
+#from email.message import EmailMessage
 
-msg = EmailMessage()
-msg.set_content('test')
-msg['Subject'] = 'piLitterRobot Notification'
-msg['From'] = 'pilitterRobot@gmail.com'
-msg['To'] = 'kaiju466@gmail.com'
+gmail_user = 'you@gmail.com'
+gmail_password = 'P@ssword!'
+
+sent_from = gmail_user
+to = ['me@gmail.com', 'bill@gmail.com']
+subject = 'OMG Super Important Message'
+body = 'Test Message'
+
+email_text = """\
+From: %s
+To: %s
+Subject: %s
+
+%s
+""" % (sent_from, ", ".join(to), subject, body)
+
 
 prog_version=1.4
 prog_name="Custom Pi-Litterbox Robot"
@@ -243,10 +254,13 @@ def scaleTiming(time,speed):
     return (time*(maxSpeed/speed))#reverse scales percentage to get time delay based on speed
     
 def notify():
-    #method for sending emails/text to specified people regarding varios state changes of the pilitterrobot
-    s = smtplib.SMTP('localhost')#need to add address for google smtp
-    s.send_message(msg)
-    s.quit()
+    #method for sending emails/text to specified people regarding various state changes of the pilitterrobot
+    s = smtplib.SMTP_SSL('smtp.gmail.com', 587)#'localhost')#need to add address for google smtp
+    s.ehlo()
+    s.login(gmail_user, gmail_password)
+    #s.starttls()
+    s.sendmail(sent_from, to, email_text)
+    s.close()
 
 #Title Screen
 print("---------------------------------")
