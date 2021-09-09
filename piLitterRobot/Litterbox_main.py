@@ -1,5 +1,7 @@
 #!/usr/bin/python
 from Raspi_MotorHAT import Raspi_MotorHAT, Raspi_DCMotor
+from machine import Pin, PWM
+from utime import sleep
 
 import time
 import atexit
@@ -15,6 +17,7 @@ GPIO.setmode(GPIO.BCM)
 
 GPIO_PIR=27#23#sensor detection for Home
 GPIO_PIR2=22#sensor detection for Dump
+GPIO_Buzzer=15#buzzer pin
 
 #GPIO_OverRide=#button used for manual run
 #GPIO_STATLIGHT=#led used to indicate finished status and issues# Blick=issue,On=Done,Off=Ok
@@ -26,6 +29,7 @@ GPIO.setup(GPIO_PIR2, GPIO.IN)#setup Dump
 
 cycle_count=1
 cycle_num_max=4
+buzzer = PWM(Pin(15))
 
 flag=True
 #dflag=True#dump flag
@@ -229,7 +233,17 @@ def scaleTiming(time,speed):
     print("scale "+str(time)+" Seconds for "+str(speed)+" Speed")
     print("Percentage Max speed is "+str((speed/maxSpeed)*100))
     return (time*(maxSpeed/speed))#reverse scales percentage to get time delay based on speed
-    
+
+def buzz():
+    print("buzz")
+    playtone(262)
+
+def bequiet():
+    buzzer.duty_u16(0)
+
+def playtone(frequency):
+    buzzer.duty_u16(1000)
+    buzzer.freq(frequency)
 
 #Title Screen
 print("---------------------------------")
