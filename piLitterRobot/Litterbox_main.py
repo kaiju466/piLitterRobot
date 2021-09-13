@@ -1,7 +1,5 @@
 #!/usr/bin/python
 from Raspi_MotorHAT import Raspi_MotorHAT, Raspi_DCMotor
-from machine import Pin, PWM
-from utime import sleep
 from gpiozero import Buzzer
 from gpiozero import TonalBuzzer
 from gpiozero.tones import Tone
