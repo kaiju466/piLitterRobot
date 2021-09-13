@@ -21,7 +21,7 @@ GPIO.setwarnings(False)
 
 #GPIO_PIR = 27  # 23#sensor detection for Home
 #GPIO_PIR2 = 22  # sensor detection for Dump
-GPIO_Buzzer = 27  # buzzer pin
+GPIO_Buzzer = 17  # buzzer pin
 #GPIO.setup(27, GPIO.OUT)
 #GPIO_Buzzer = GPIO.PWM(17, 100)
 #GPIO_Buzzer.start(5)
