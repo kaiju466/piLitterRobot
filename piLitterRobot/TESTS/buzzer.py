@@ -21,7 +21,7 @@ GPIO.setwarnings(False)
 
 #GPIO_PIR = 27  # 23#sensor detection for Home
 #GPIO_PIR2 = 22  # sensor detection for Dump
-#GPIO_Buzzer = 27  # buzzer pin
+GPIO_Buzzer = 27  # buzzer pin
 #GPIO.setup(27, GPIO.OUT)
 #GPIO_Buzzer = GPIO.PWM(17, 100)
 #GPIO_Buzzer.start(5)
@@ -54,8 +54,8 @@ GPIO.setwarnings(False)
 
     # mh.getMotor(2).run(Raspi_MotorHAT.RELEASE)
 
-buzzer=Buzzer(17)
-b = TonalBuzzer(27)
+#buzzer=Buzzer(GPIO_Buzzer)
+b = TonalBuzzer(GPIO_Buzzer)
 
 
 def buzz():
@@ -70,7 +70,7 @@ def buzz():
 #def bequiet():
     #buzzer.duty_u16(0)
 
-
+#Note range A3-G5
 def playtone(frequency):
     b.play(Tone(frequency))
     time.sleep(0.5)
@@ -78,10 +78,12 @@ def playtone(frequency):
 
 def finishSong():
     song = ["A4","P","B4","C4"]
+    song=song[::-1]
     playsong(song)
-    
+
 def troubleSong():
-    song = ["A4","P","B4","C4"]
+    song = ["A3","A4","A5"]
+    song=song[::-1]
     playsong(song)
 
 def startupSong():
@@ -89,12 +91,12 @@ def startupSong():
     playsong(song)
 
 def ode2JoySong():
-    song = ["C4","C4","D4","E4","P","E4","D4","C4","B4"]
+    song = ["C4","C4","D4","E4","P","E4","D4","C4","B3","P","B3","B3","C4","D4"]
     playsong(song)
 
     
 def playsong(mysong):
-    print(str(len(mysong)))
+    #print(str(len(mysong)))
     for i in range(len(mysong)):
         if (mysong[i] == "P"):
             time.sleep(0.25)
@@ -126,9 +128,13 @@ time.sleep(2.00)
 
 #buzz()
 #Ode2JoySong()
-startupSong()
-
-time.sleep(2.00)
+print("PlAYING SONG")
+#startupSong()
+#time.sleep(2.00)
+#ode2JoySong()
+#finishSong()
+#time.sleep(4.00)
+troubleSong()
 #bequiet()
 
 print("Exiting- Goodbye!")

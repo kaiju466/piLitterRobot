@@ -2,6 +2,10 @@
 from Raspi_MotorHAT import Raspi_MotorHAT, Raspi_DCMotor
 from machine import Pin, PWM
 from utime import sleep
+from gpiozero import Buzzer
+from gpiozero import TonalBuzzer
+from gpiozero.tones import Tone
+
 
 import time
 import atexit
@@ -17,7 +21,9 @@ GPIO.setmode(GPIO.BCM)
 
 GPIO_PIR=27#23#sensor detection for Home
 GPIO_PIR2=22#sensor detection for Dump
-GPIO_Buzzer=15#buzzer pin
+
+GPIO_Buzzer=17#buzzer pin
+b = TonalBuzzer(GPIO_Buzzer)
 
 #GPIO_OverRide=#button used for manual run
 #GPIO_STATLIGHT=#led used to indicate finished status and issues# Blick=issue,On=Done,Off=Ok
@@ -234,16 +240,39 @@ def scaleTiming(time,speed):
     print("Percentage Max speed is "+str((speed/maxSpeed)*100))
     return (time*(maxSpeed/speed))#reverse scales percentage to get time delay based on speed
 
-def buzz():
-    print("buzz")
-    playtone(262)
-
-def bequiet():
-    buzzer.duty_u16(0)
-
+#music functions
+#Note range A3-G5
 def playtone(frequency):
-    buzzer.duty_u16(1000)
-    buzzer.freq(frequency)
+    b.play(Tone(frequency))
+    time.sleep(0.5)
+    b.stop()
+
+def finishSong():
+    song = ["A4","P","B4","C4"]
+    song=song[::-1]
+    playsong(song)
+
+def troubleSong():
+    song = ["A3","A4","A5"]
+    song=song[::-1]
+    playsong(song)
+
+def startupSong():
+    song = ["A4","P","B4","C4"]
+    playsong(song)
+
+def ode2JoySong():
+    song = ["C4","C4","D4","E4","P","E4","D4","C4","B3","P","B3","B3","C4","D4"]
+    playsong(song)
+
+    
+def playsong(mysong):
+    #print(str(len(mysong)))
+    for i in range(len(mysong)):
+        if (mysong[i] == "P"):
+            time.sleep(0.25)
+        else:
+            playtone(mysong[i])
 
 #Title Screen
 print("---------------------------------")
