@@ -6,28 +6,15 @@ import atexit
 import RPi.GPIO as GPIO
 import datetime
 
-# Import smtplib for the actual sending function
-import smtplib
+import smtplib, ssl
 
-# Import the email modules we'll need
-#from email.message import EmailMessage
-
-gmail_user = 'you@gmail.com'
-gmail_password = 'P@ssword!'
-
-sent_from = gmail_user
-to = ['me@gmail.com', 'bill@gmail.com']
-subject = 'OMG Super Important Message'
-body = 'Test Message'
-
-email_text = """\
-From: %s
-To: %s
-Subject: %s
-
-%s
-""" % (sent_from, ", ".join(to), subject, body)
-
+port = 587  # For starttls
+smtp_server = "smtp.gmail.com"
+sender_email = "piLitterRobot@gmail.com"
+receiver_email = "kaiju466@gmail.com"
+password = "Ezekiel!180"#input("Type your password and press enter:")
+subject="Subject:"
+context = ssl.create_default_context()
 
 prog_version=1.4
 prog_name="Custom Pi-Litterbox Robot"
@@ -252,21 +239,25 @@ def scaleTiming(time,speed):
     print("scale "+str(time)+" Seconds for "+str(speed)+" Speed")
     print("Percentage Max speed is "+str((speed/maxSpeed)*100))
     return (time*(maxSpeed/speed))#reverse scales percentage to get time delay based on speed
-    
-def notify():
-    #method for sending emails/text to specified people regarding various state changes of the pilitterrobot
-    s = smtplib.SMTP_SSL('smtp.gmail.com', 587)#'localhost')#need to add address for google smtp
-    s.ehlo()
-    s.login(gmail_user, gmail_password)
-    #s.starttls()
-    s.sendmail(sent_from, to, email_text)
-    s.close()
+
+#email function
+def notify(sbj,msg):
+    with smtplib.SMTP(smtp_server, port) as server:
+        server.ehlo()  # Can be omitted
+        server.starttls(context=context)
+        server.ehlo()  # Can be omitted
+        server.login(sender_email, password)
+        sbj=subject+sbj
+        server.sendmail(sender_email, receiver_email, sbj+" \n"+msg)
+        
 
 #Title Screen
 print("---------------------------------")
 print("-"+prog_name+" "+str(prog_version)+"  -")
 print("-Date:"+current_datetime.today().strftime('%Y-%h-%d')+"               -")
 print("---------------------------------")
+
+notify("Starting piLitterRobot","piLitterRobot has started it's run cycle. Will cycle "+str(cycle_num_max)+" number of times every "+str(numInterval_Hours)+" hours")
 
 time.sleep(2.00)
 
@@ -306,4 +297,4 @@ while (flag):
             
     
 print("Exiting- Goodbye!")
-
+notify("Finished","piLitterRobot has completed all "+str(cycle_num_max)+" of it's run cycles it was scheduled to run every "+str(numInterval_Hours)+" hours. Please check the machine's litter tray and reset")
