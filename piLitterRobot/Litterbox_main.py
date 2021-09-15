@@ -33,7 +33,7 @@ GPIO.setup(GPIO_PIR2, GPIO.IN)#setup Dump
 
 cycle_count=1
 cycle_num_max=4
-buzzer = PWM(Pin(15))
+
 
 flag=True
 #dflag=True#dump flag
@@ -42,6 +42,7 @@ flag=True
 current_datetime=datetime.date.today()
 #datetime.datetime.now()
 next_run_datetime=datetime.datetime(2021, 7, 12, 9, 55, 0, 342380)
+next_song_run=datetime.datetime(2021, 7, 12, 9, 55, 0, 342380)
 #next_run_time=datetime.time(hour = 20, minute = 45, second = 0)
 
 curDir=0#-1=reverse,0=stopped,1=forward
@@ -272,12 +273,24 @@ def playsong(mysong):
         else:
             playtone(mysong[i])
 
+#play song every 15 min 
+def playFinishSongRepeat(time)
+    global current_datetime,next_song_run
+    while (True):
+        #next_song_run
+        current_datetime=datetime.datetime.now()
+        if current_datetime>=next_song_run:
+            finishSong()
+            next_song_run=(datetime.datetime.now() + datetime.timedelta(minutes=time))#minutes=numInterval_Hours))#
+        
+            
+
 #Title Screen
 print("---------------------------------")
 print("-"+prog_name+" "+str(prog_version)+"  -")
 print("-Date:"+current_datetime.today().strftime('%Y-%h-%d')+"               -")
 print("---------------------------------")
-
+startupSong()
 time.sleep(2.00)
 
 #main
@@ -316,4 +329,4 @@ while (flag):
             
     
 print("Exiting- Goodbye!")
-
+playFinishSongRepeat(15)
