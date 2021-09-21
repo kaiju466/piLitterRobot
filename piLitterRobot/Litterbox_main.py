@@ -274,7 +274,7 @@ def playsong(mysong):
             playtone(mysong[i])
 
 #play song every 15 min 
-def playFinishSongRepeat(time)
+def playFinishSongRepeat(time):
     global current_datetime,next_song_run
     while (True):
         #next_song_run
