@@ -273,16 +273,17 @@ def playsong(mysong):
         else:
             playtone(mysong[i])
 
-#play song every 15 min 
+#play song every # min 
 def playFinishSongRepeat(time):
     global current_datetime,next_song_run
     while (True):
         #next_song_run
         current_datetime=datetime.datetime.now()
         if current_datetime>=next_song_run:
+            print("Playing finishSong every "+str(time)+" minutes")
             finishSong()
             next_song_run=(datetime.datetime.now() + datetime.timedelta(minutes=time))#minutes=numInterval_Hours))#
-        
+            print("Playing next song at "+str(next_song_run))
             
 
 #Title Screen
@@ -329,4 +330,4 @@ while (flag):
             
     
 print("Exiting- Goodbye!")
-playFinishSongRepeat(15)
+playFinishSongRepeat(1)

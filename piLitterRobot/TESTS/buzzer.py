@@ -6,6 +6,7 @@ from gpiozero import Buzzer
 from gpiozero import TonalBuzzer
 from gpiozero.tones import Tone
 
+import datetime
 import time
 import atexit
 import RPi.GPIO as GPIO
@@ -21,7 +22,7 @@ GPIO.setwarnings(False)
 
 #GPIO_PIR = 27  # 23#sensor detection for Home
 #GPIO_PIR2 = 22  # sensor detection for Dump
-GPIO_Buzzer = 17  # buzzer pin
+GPIO_Buzzer = 26  # buzzer pin
 #GPIO.setup(27, GPIO.OUT)
 #GPIO_Buzzer = GPIO.PWM(17, 100)
 #GPIO_Buzzer.start(5)
@@ -56,7 +57,10 @@ GPIO_Buzzer = 17  # buzzer pin
 
 #buzzer=Buzzer(GPIO_Buzzer)
 b = TonalBuzzer(GPIO_Buzzer)
-
+current_datetime=datetime.date.today()
+#datetime.datetime.now()
+next_run_datetime=datetime.datetime(2021, 7, 12, 9, 55, 0, 342380)
+next_song_run=datetime.datetime(2021, 7, 12, 9, 55, 0, 342380)
 
 def buzz():
     print("buzz")
@@ -103,7 +107,17 @@ def playsong(mysong):
         else:
             playtone(mysong[i])
         
-    
+#play song every # min 
+def playFinishSongRepeat(time):
+    global current_datetime,next_song_run
+    while (True):
+        #next_song_run
+        current_datetime=datetime.datetime.now()
+        if current_datetime>=next_song_run:
+            print("Playing finishSong every "+str(time)+" minutes")
+            finishSong()
+            next_song_run=(datetime.datetime.now() + datetime.timedelta(minutes=time))#minutes=numInterval_Hours))#
+            print("Playing next song at "+str(next_song_run))
 
 #def playsong(mysong):
 #    for i in range(len(mysong)):
@@ -134,8 +148,9 @@ print("PlAYING SONG")
 #ode2JoySong()
 #finishSong()
 #time.sleep(4.00)
-troubleSong()
+#troubleSong()
 #bequiet()
+playFinishSongRepeat(1)
 
 print("Exiting- Goodbye!")
 
