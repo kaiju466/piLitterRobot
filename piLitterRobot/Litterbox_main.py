@@ -20,7 +20,7 @@ GPIO.setmode(GPIO.BCM)
 GPIO_PIR=27#23#sensor detection for Home
 GPIO_PIR2=22#sensor detection for Dump
 
-GPIO_Buzzer=17#buzzer pin
+GPIO_Buzzer=26#buzzer pin
 b = TonalBuzzer(GPIO_Buzzer)
 
 #GPIO_OverRide=#button used for manual run
