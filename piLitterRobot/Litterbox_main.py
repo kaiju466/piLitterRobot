@@ -280,7 +280,7 @@ def playSongOnRepeat(time,methodToRun):
         #next_song_run
         current_datetime=datetime.datetime.now()
         if current_datetime>=next_song_run:
-            print("Playing Song every "+str(time)+" minutes")
+            print("Playing Song every "+str(time)+" minute(s)")
             methodToRun()
             next_song_run=(datetime.datetime.now() + datetime.timedelta(minutes=time))#minutes=numInterval_Hours))#
             print("Playing next song at "+str(next_song_run))

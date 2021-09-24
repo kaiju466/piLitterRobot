@@ -16,49 +16,14 @@ prog_version = 1.0
 prog_name = "Buzzer Test Program"
 mode = GPIO.getmode()
 
-# GPIO.setmode(GPIO.BOARD)
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 
-#GPIO_PIR = 27  # 23#sensor detection for Home
-#GPIO_PIR2 = 22  # sensor detection for Dump
 GPIO_Buzzer = 26  # buzzer pin
-#GPIO.setup(27, GPIO.OUT)
-#GPIO_Buzzer = GPIO.PWM(17, 100)
-#GPIO_Buzzer.start(5)
-#time.sleep(2)
 
-# GPIO_OverRide=#button used for manual run
-# GPIO_STATLIGHT=#led used to indicate finished status and issues# Blick=issue,On=Done,Off=Ok
-
-# counter=1
-# counter2=1
-
-#https://www.tomshardware.com/how-to/buzzer-music-raspberry-pi-pico
-
-#buzzer = PWM(Pin(GPIO_Buzzer))
-
-
-# GPIO.setup(4, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-# cb = ButtonHandler(4, real_cb, edge='rising', bouncetime=100)
-# cb.start()
-# GPIO.add_event_detect(4, GPIO.RISING, callback=cb)
-
-# datetime.datetime(2020, 5, 17)
-
-# create a default object, no changes to I2C address or frequency
-#mh = Raspi_MotorHAT(addr=0x6f)  # default address: 0x6f
-
-# initialize motor
-
-    # elif
-
-    # mh.getMotor(2).run(Raspi_MotorHAT.RELEASE)
-
-#buzzer=Buzzer(GPIO_Buzzer)
 b = TonalBuzzer(GPIO_Buzzer)
+
 current_datetime=datetime.date.today()
-#datetime.datetime.now()
 next_run_datetime=datetime.datetime(2021, 7, 12, 9, 55, 0, 342380)
 next_song_run=datetime.datetime(2021, 7, 12, 9, 55, 0, 342380)
 
@@ -68,11 +33,7 @@ def buzz():
     time.sleep(0.1)
     buzzer.off()
     time.sleep(0.2)
-    #playtone(262)
 
-
-#def bequiet():
-    #buzzer.duty_u16(0)
 
 #Note range A3-G5
 def playtone(frequency):
@@ -146,18 +107,10 @@ def playSongOnRepeat(time,methodToRun):
         #next_song_run
         current_datetime=datetime.datetime.now()
         if current_datetime>=next_song_run:
-            print("Playing Song every "+str(time)+" minutes")
+            print("Playing Song every "+str(time)+" minute(s)")
             methodToRun()
             next_song_run=(datetime.datetime.now() + datetime.timedelta(minutes=time))#minutes=numInterval_Hours))#
             print("Playing next song at "+str(next_song_run))
-#def playsong(mysong):
-#    for i in range(len(mysong)):
-#        if (mysong[i] == "P"):
-#            bequiet()
-#        else:
-#            playtone(tones[mysong[i]])
- #       sleep(0.3)
-#    bequiet()
 
 
 # Title Screen
