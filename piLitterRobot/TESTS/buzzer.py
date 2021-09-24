@@ -84,6 +84,7 @@ def finishSong():
     song = ["A4","P","B4","C4"]
     song=song[::-1]
     playsong(song)
+    #return 0
 
 def troubleSong():
     song = ["A3","A4","A5"]
@@ -95,19 +96,38 @@ def startupSong():
     playsong(song)
 
 def ode2JoySong():
-    song = ["C4","C4","D4","E4","P","E4","D4","C4","B3","P","B3","B3","C4","D4"]
+    song = ["C4","C4","D4","E4","E4","D4","C4","B3","B3","B3","C4","D4","D4","C4","C4"]
     playsong(song)
-
+def songOfStorms():
+    song = ["D4","E4","D4",
+            "D4","E4","D4",
+            "E4","F4","E4",
+            "F4","E4","C4",
+            "A4","A4","D4","F4","G4"]
+    playsong(song)
+def bolaroOfFire():
+    song = ["C4","C4","D4","E4","E4","D4","C4","B3","B3","B3","C4","D4","D4","C4","C4"]
+    playsong(song)
+def songOfTime():
+    song = ["A4","D4","F4","P",
+            "A4","D4","F4","P",
+            
+            "A4","C4","B4",
+            
+            "G4","F4","G4",
+            "A4","D4","C4",
+            "E4","D4"]
+    playsong(song)
     
 def playsong(mysong):
     #print(str(len(mysong)))
     for i in range(len(mysong)):
         if (mysong[i] == "P"):
-            time.sleep(0.25)
+            time.sleep(0.10)
         else:
             playtone(mysong[i])
         
-#play song every # min 
+#play finish song every # min 
 def playFinishSongRepeat(time):
     global current_datetime,next_song_run
     while (True):
@@ -118,7 +138,18 @@ def playFinishSongRepeat(time):
             finishSong()
             next_song_run=(datetime.datetime.now() + datetime.timedelta(minutes=time))#minutes=numInterval_Hours))#
             print("Playing next song at "+str(next_song_run))
-
+            
+#play song every # min 
+def playSongOnRepeat(time,methodToRun):
+    global current_datetime,next_song_run
+    while (True):
+        #next_song_run
+        current_datetime=datetime.datetime.now()
+        if current_datetime>=next_song_run:
+            print("Playing Song every "+str(time)+" minutes")
+            methodToRun()
+            next_song_run=(datetime.datetime.now() + datetime.timedelta(minutes=time))#minutes=numInterval_Hours))#
+            print("Playing next song at "+str(next_song_run))
 #def playsong(mysong):
 #    for i in range(len(mysong)):
 #        if (mysong[i] == "P"):
@@ -145,12 +176,13 @@ time.sleep(2.00)
 print("PlAYING SONG")
 #startupSong()
 #time.sleep(2.00)
-#ode2JoySong()
+#songOfTime()
+playSongOnRepeat(1,finishSong)
 #finishSong()
 #time.sleep(4.00)
 #troubleSong()
 #bequiet()
-playFinishSongRepeat(1)
+#playFinishSongRepeat(1)
 
 print("Exiting- Goodbye!")
 

@@ -198,9 +198,9 @@ def printHomeDetected(GPIO_PIR2):
         #counter2=counter2+1
         #motorStop()
         #print("Stop")
-        time.sleep(scaleTiming(3.00,motorSpeed))#time.sleep(3.00)
+        time.sleep(scaleTiming(5.00,motorSpeed))#time.sleep(3.00)
         reverseCurMotorDir(lastDir)
-        time.sleep(scaleTiming(2.00,motorSpeed))#time.sleep(2.00)
+        time.sleep(scaleTiming(4.00,motorSpeed))#time.sleep(2.00)
         motorStop()
         curPos=0
         print("Reached Home")
@@ -235,7 +235,7 @@ def scaleTiming(time,speed):
     ##speed=0 is stopped
     maxSpeed=255
     minSpeed=1
-    print("scale "+str(time)+" Seconds for "+str(speed)+" Speed")
+    print("Scale "+str(time)+" Seconds for "+str(speed)+" Speed")
     print("Percentage Max speed is "+str((speed/maxSpeed)*100))
     return (time*(maxSpeed/speed))#reverse scales percentage to get time delay based on speed
 
@@ -274,14 +274,14 @@ def playsong(mysong):
             playtone(mysong[i])
 
 #play song every # min 
-def playFinishSongRepeat(time):
+def playSongOnRepeat(time,methodToRun):
     global current_datetime,next_song_run
     while (True):
         #next_song_run
         current_datetime=datetime.datetime.now()
         if current_datetime>=next_song_run:
-            print("Playing finishSong every "+str(time)+" minutes")
-            finishSong()
+            print("Playing Song every "+str(time)+" minutes")
+            methodToRun()
             next_song_run=(datetime.datetime.now() + datetime.timedelta(minutes=time))#minutes=numInterval_Hours))#
             print("Playing next song at "+str(next_song_run))
             
@@ -330,4 +330,4 @@ while (flag):
             
     
 print("Exiting- Goodbye!")
-playFinishSongRepeat(1)
+playSongOnRepeat(1,finishSong)
