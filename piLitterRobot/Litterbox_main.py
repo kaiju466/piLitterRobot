@@ -1,5 +1,9 @@
 #!/usr/bin/python
 from Raspi_MotorHAT import Raspi_MotorHAT, Raspi_DCMotor
+from gpiozero import Buzzer
+from gpiozero import TonalBuzzer
+from gpiozero.tones import Tone
+
 
 import time
 import atexit
@@ -16,6 +20,9 @@ GPIO.setmode(GPIO.BCM)
 GPIO_PIR=27#23#sensor detection for Home
 GPIO_PIR2=22#sensor detection for Dump
 
+GPIO_Buzzer=26#buzzer pin
+b = TonalBuzzer(GPIO_Buzzer)
+
 #GPIO_OverRide=#button used for manual run
 #GPIO_STATLIGHT=#led used to indicate finished status and issues# Blick=issue,On=Done,Off=Ok
 
@@ -27,6 +34,7 @@ GPIO.setup(GPIO_PIR2, GPIO.IN)#setup Dump
 cycle_count=1
 cycle_num_max=4
 
+
 flag=True
 #dflag=True#dump flag
 #sflag=False#home flag
@@ -34,6 +42,7 @@ flag=True
 current_datetime=datetime.date.today()
 #datetime.datetime.now()
 next_run_datetime=datetime.datetime(2021, 7, 12, 9, 55, 0, 342380)
+next_song_run=datetime.datetime(2021, 7, 12, 9, 55, 0, 342380)
 #next_run_time=datetime.time(hour = 20, minute = 45, second = 0)
 
 curDir=0#-1=reverse,0=stopped,1=forward
@@ -229,14 +238,60 @@ def scaleTiming(time,speed):
     print("scale "+str(time)+" Seconds for "+str(speed)+" Speed")
     print("Percentage Max speed is "+str((speed/maxSpeed)*100))
     return (time*(maxSpeed/speed))#reverse scales percentage to get time delay based on speed
+
+#music functions
+#Note range A3-G5
+def playtone(frequency):
+    b.play(Tone(frequency))
+    time.sleep(0.5)
+    b.stop()
+
+def finishSong():
+    song = ["A4","P","B4","C4"]
+    song=song[::-1]
+    playsong(song)
+
+def troubleSong():
+    song = ["A3","A4","A5"]
+    song=song[::-1]
+    playsong(song)
+
+def startupSong():
+    song = ["A4","P","B4","C4"]
+    playsong(song)
+
+def ode2JoySong():
+    song = ["C4","C4","D4","E4","P","E4","D4","C4","B3","P","B3","B3","C4","D4"]
+    playsong(song)
+
     
+def playsong(mysong):
+    #print(str(len(mysong)))
+    for i in range(len(mysong)):
+        if (mysong[i] == "P"):
+            time.sleep(0.25)
+        else:
+            playtone(mysong[i])
+
+#play song every # min 
+def playFinishSongRepeat(time):
+    global current_datetime,next_song_run
+    while (True):
+        #next_song_run
+        current_datetime=datetime.datetime.now()
+        if current_datetime>=next_song_run:
+            print("Playing finishSong every "+str(time)+" minutes")
+            finishSong()
+            next_song_run=(datetime.datetime.now() + datetime.timedelta(minutes=time))#minutes=numInterval_Hours))#
+            print("Playing next song at "+str(next_song_run))
+            
 
 #Title Screen
 print("---------------------------------")
 print("-"+prog_name+" "+str(prog_version)+"  -")
 print("-Date:"+current_datetime.today().strftime('%Y-%h-%d')+"               -")
 print("---------------------------------")
-
+startupSong()
 time.sleep(2.00)
 
 #main
@@ -275,4 +330,4 @@ while (flag):
             
     
 print("Exiting- Goodbye!")
-
+playFinishSongRepeat(1)
