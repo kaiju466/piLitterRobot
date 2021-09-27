@@ -11,9 +11,23 @@ import RPi.GPIO as GPIO
 import datetime
 import logging
 
+
 logging.basicConfig(filename='litterbox_main.log', level=logging.DEBUG)#litterbox_main.log
 
 prog_version=1.6
+
+import smtplib, ssl
+
+port = 587  # For starttls
+smtp_server = "smtp.gmail.com"
+sender_email = "piLitterRobot@gmail.com"
+receiver_email = "kaiju466@gmail.com"
+password = "Ezekiel!180"#input("Type your password and press enter:")
+subject="Subject:"
+context = ssl.create_default_context()
+
+
+
 prog_name="Custom Pi-Litterbox Robot"
 mode = GPIO.getmode()
 
@@ -276,6 +290,17 @@ def playsong(mysong):
         else:
             playtone(mysong[i])
 
+#email function
+def notify(sbj,msg):
+    with smtplib.SMTP(smtp_server, port) as server:
+        server.ehlo()  # Can be omitted
+        server.starttls(context=context)
+        server.ehlo()  # Can be omitted
+        server.login(sender_email, password)
+        sbj=subject+sbj
+        server.sendmail(sender_email, receiver_email, sbj+" \n"+msg)
+        
+
 #play song every # min 
 def playSongOnRepeat(time,methodToRun):
     global current_datetime,next_song_run
@@ -311,6 +336,8 @@ logAndPrint("Info","-"+prog_name+" "+str(prog_version)+"  -")
 logAndPrint("Info","-Date:"+current_datetime.today().strftime('%Y-%h-%d')+"               -")
 logAndPrint("Info","---------------------------------")
 startupSong()
+notify("Starting piLitterRobot","piLitterRobot has started it's run cycle. Will cycle "+str(cycle_num_max)+" times every "+str(numInterval_Hours)+" hours")
+
 time.sleep(2.00)
 
 #main
@@ -347,6 +374,9 @@ while (flag):
                 cycle_count=cycle_count+1
                 curDest=-1
             
+
     
 logAndPrint("Info","Exiting- Goodbye!")
+notify("Starting piLitterRobot","piLitterRobot has used up its "+str(cycle_num_max)+" run cycle(s).")   
+
 playSongOnRepeat(1,finishSong)
