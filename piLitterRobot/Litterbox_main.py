@@ -245,7 +245,7 @@ def countDown(num):
     logAndPrint("Info","waiting for "+str(num)+"secs")
     for i in range(num):
         time.sleep(1)
-        logAndPrint("Info",str(i+1))
+        logAndPrint("Info",str(i+1)+ " Mississippi")
 
 def scaleTiming(time,speed):
     ##speed range 1-255 (units=?)
@@ -292,14 +292,20 @@ def playsong(mysong):
 
 #email function
 def notify(sbj,msg):
-    with smtplib.SMTP(smtp_server, port) as server:
-        server.ehlo()  # Can be omitted
-        server.starttls(context=context)
-        server.ehlo()  # Can be omitted
-        server.login(sender_email, password)
-        sbj=subject+sbj
-        server.sendmail(sender_email, receiver_email, sbj+" \n"+msg)
-        
+    try:
+        logAndPrint("Debug","start email process")
+        with smtplib.SMTP(smtp_server, port) as server:
+            logAndPrint("Debug","start email server")
+            server.ehlo()  # Can be omitted
+            server.starttls(context=context)
+            server.ehlo()  # Can be omitted
+            server.login(sender_email, password)
+            sbj=subject+sbj
+            server.sendmail(sender_email, receiver_email, sbj+" \n"+msg)
+            logAndPrint("Debug","End email")
+    except Exception as err:
+        logAndPrint("Error","Fatal error in notify|"+err.message)
+        #logger.exception("Fatal error in notify")
 
 #play song every # min 
 def playSongOnRepeat(time,methodToRun):
