@@ -21,9 +21,13 @@ mode = GPIO.getmode()
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 
+
+
 def logAndPrint(msgType,msg):
-    print(msg)
-    message=str(datetime.date.today())+" "+msg
+    
+    current_datetime=datetime.datetime.now()#.today().strftime('%Y-%h-%d')
+    message=str(current_datetime)+"|"+msg
+    print(message)
     if msgType=="Debug":
         logging.debug(message)
     elif msgType=="Info":

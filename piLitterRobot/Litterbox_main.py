@@ -290,13 +290,15 @@ def playSongOnRepeat(time,methodToRun):
 
 #console prints messages and logs them to the log file
 def logAndPrint(msgType,msg):
-    print(msg)
-    message=str(datetime.date.today())+" "+msg
+    
+    current_datetime=datetime.datetime.now()#.today().strftime('%Y-%h-%d')
+    message=str(current_datetime)+"|"+msg
+    print(message)
     if msgType=="Debug":
         logging.debug(message)
-    elif msgType=='Info':
+    elif msgType=="Info":
         logging.info(message)
-    elif msgType=='Warning':
+    elif msgType=="Warning":
         logging.warning(message)
     elif msgType=='Error':
         logging.error(message)
