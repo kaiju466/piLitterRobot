@@ -12,7 +12,7 @@ import atexit
 import RPi.GPIO as GPIO
 import logging
 
-logging.basicConfig(filename='litterbox_main.log', level=logging.DEBUG)
+logging.basicConfig(filename='litterbox_main.log', level=logging.DEBUG)#litterbox_main.log log file
 
 prog_version = 1.1
 prog_name = "Logging Test Program"

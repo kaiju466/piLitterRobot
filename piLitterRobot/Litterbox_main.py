@@ -11,7 +11,7 @@ import RPi.GPIO as GPIO
 import datetime
 import logging
 
-logging.basicConfig(filename='example.log', level=logging.DEBUG)
+logging.basicConfig(filename='litterbox_main.log', level=logging.DEBUG)#litterbox_main.log
 
 prog_version=1.6
 prog_name="Custom Pi-Litterbox Robot"
