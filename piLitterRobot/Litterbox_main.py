@@ -313,6 +313,8 @@ print("-"+prog_name+" "+str(prog_version)+"  -")
 print("-Date:"+current_datetime.today().strftime('%Y-%h-%d')+"               -")
 print("---------------------------------")
 startupSong()
+notify("Starting piLitterRobot","piLitterRobot has started it's run cycle. Will cycle "+str(cycle_num_max)+" times every "+str(numInterval_Hours)+" hours")
+
 time.sleep(2.00)
 
 #main
@@ -349,6 +351,6 @@ while (flag):
                 cycle_count=cycle_count+1
                 curDest=-1
             
-    
+notify("Starting piLitterRobot","piLitterRobot has used up its "+str(cycle_num_max)+" run cycle(s).")   
 print("Exiting- Goodbye!")
 playSongOnRepeat(1,finishSong)
