@@ -14,7 +14,7 @@ import logging
 
 logging.basicConfig(filename='litterbox_main.log', level=logging.DEBUG)
 
-prog_version = 1.0
+prog_version = 1.1
 prog_name = "Logging Test Program"
 mode = GPIO.getmode()
 

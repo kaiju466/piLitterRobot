@@ -13,7 +13,7 @@ import logging
 
 logging.basicConfig(filename='example.log', level=logging.DEBUG)
 
-prog_version=1.5
+prog_version=1.6
 prog_name="Custom Pi-Litterbox Robot"
 mode = GPIO.getmode()
 
