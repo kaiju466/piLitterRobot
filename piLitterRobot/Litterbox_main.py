@@ -1,12 +1,16 @@
 #!/usr/bin/python
 from Raspi_MotorHAT import Raspi_MotorHAT, Raspi_DCMotor
+from gpiozero import Buzzer
+from gpiozero import TonalBuzzer
+from gpiozero.tones import Tone
+
 
 import time
 import atexit
 import RPi.GPIO as GPIO
 import datetime
 
-prog_version=1.3
+prog_version=1.4
 prog_name="Custom Pi-Litterbox Robot"
 mode = GPIO.getmode()
 
@@ -14,15 +18,22 @@ mode = GPIO.getmode()
 GPIO.setmode(GPIO.BCM)
 
 GPIO_PIR=27#23#sensor detection for Home
-GPIO_PIR2=22#sensor detection for Dump Hole
+GPIO_PIR2=22#sensor detection for Dump
 
-GPIO.setup(GPIO_PIR2, GPIO.IN)#setup Shift hole
+GPIO_Buzzer=26#buzzer pin
+b = TonalBuzzer(GPIO_Buzzer)
 
-counter=1
-counter2=1
+#GPIO_OverRide=#button used for manual run
+#GPIO_STATLIGHT=#led used to indicate finished status and issues# Blick=issue,On=Done,Off=Ok
+
+GPIO.setup(GPIO_PIR2, GPIO.IN)#setup Dump
+
+#counter=1
+#counter2=1
 
 cycle_count=1
 cycle_num_max=4
+
 
 flag=True
 #dflag=True#dump flag
@@ -31,6 +42,7 @@ flag=True
 current_datetime=datetime.date.today()
 #datetime.datetime.now()
 next_run_datetime=datetime.datetime(2021, 7, 12, 9, 55, 0, 342380)
+next_song_run=datetime.datetime(2021, 7, 12, 9, 55, 0, 342380)
 #next_run_time=datetime.time(hour = 20, minute = 45, second = 0)
 
 curDir=0#-1=reverse,0=stopped,1=forward
@@ -40,6 +52,10 @@ curDest=1#Unknown=-1,Home=0,Dump=1
 numInterval_Hours=6
 dump_time=20#in secs
 
+#GPIO.setup(4, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+#cb = ButtonHandler(4, real_cb, edge='rising', bouncetime=100)
+#cb.start()
+#GPIO.add_event_detect(4, GPIO.RISING, callback=cb)
 
 #datetime.datetime(2020, 5, 17)
 
@@ -49,8 +65,8 @@ mh = Raspi_MotorHAT(addr=0x6f)#default address: 0x6f
 #initialize motor
 myMotor = mh.getMotor(2)
 motorSpeed=50#250#150
-#flagDir1=myMotor.IN1pin
-#flagDir2=myMotor.IN2pin
+
+
 # recommended for auto-disabling motors on shutdown!
 def turnOffMotors():
     global curDir
@@ -115,6 +131,7 @@ def move2Home():
     else:
         motorForward()
 
+#moves globe to shift waste from litter and dump
 def move2Dump():
     print("Preparing to Dump")
     global curDest
@@ -128,18 +145,33 @@ def move2Dump():
         motorReverse()
     #print("Finished!")
     #print("Next run date/time:"+str(next_run_datetime))
+        
+#moves globe to completely dump litter
+def move2FullDump():
+    print("Preparing to Full Dump")
+    global curDest
+    #print(str(curPos))
+    if curPos==0:
+        curDest=1
+        motorReverse()
+    elif curPos==-1:
+        motorReverse()
+    else:
+        motorForward()
+    #print("Finished!")
+    #print("Next run date/time:"+str(next_run_datetime))
     
-#HallEffect Sensor Test
+#HallEffect Sensor functions
 GPIO.setup(GPIO_PIR,GPIO.IN,pull_up_down=GPIO.PUD_UP)
 def printDumpDetected(GPIO_PIR):
     global curPos,lastDir
     #print(str(sflag))
     if curDest==1 and curDir==1 and curPos!=1:
-        global counter
+        #global counter
         curPos=1
         lastDir=curDir
         #print("printDumpDetected "+str(counter)+" "+str(lastDir))
-        counter=counter+1
+        #counter=counter+1
         motorStop()
         print("Reached Dump")
         #print("Stop")
@@ -160,15 +192,15 @@ def printHomeDetected(GPIO_PIR2):
     global curPos,lastDir
     #print(str(sflag))
     if curDest==0 and curDir==-1 and curPos!=0:
-        global counter2
+        #global counter2
         lastDir=curDir
         #print("printHomeDetected "+str(counter2)+" "+str(lastDir))
-        counter2=counter2+1
+        #counter2=counter2+1
         #motorStop()
         #print("Stop")
-        time.sleep(3.00)
+        time.sleep(scaleTiming(5.00,motorSpeed))#time.sleep(3.00)
         reverseCurMotorDir(lastDir)
-        time.sleep(2.00)
+        time.sleep(scaleTiming(4.00,motorSpeed))#time.sleep(2.00)
         motorStop()
         curPos=0
         print("Reached Home")
@@ -178,28 +210,88 @@ def printHomeDetected(GPIO_PIR2):
         
 GPIO.add_event_detect(GPIO_PIR2,GPIO.RISING,callback=printHomeDetected)
 
+#Manual Interaction Functions
+#def manualOverride:
+#    print("Manual Override Detected")
+#    print("Run Cycle")
+#    cycle_num_max=cycle_num_max+1
+#    next_run_datetime=datetime.datetime.now()
 
+#GPIO.add_event_detect(GPIO_OverRide,GPIO.RISING,callback=manualOverride)
+
+#code for enabling ircontrol of box
+#def irOverride:
+#    print("IR Override Detected")
+
+#Misc functions
 def countDown(num):
     print("waiting for "+str(num)+"secs")
     for i in range(num):
         time.sleep(1)
         print(str(i+1))
 
-def scaleTiming(time,speed)
-	##speed range 1-255 (units=?)
-	##speed=0 is stopped
-	maxSpeed=255
-	minSpeed=1
-	print("scale "+str(time)+" Seconds for "+str(speed)+" Speed")
-	print("Percentage Max speed is "+str((speed/maxSpeed)*100))
-	return (time*(maxSpeed/speed))#reverse scales percentage to get time delay based on speed
-	
-#title screen
+def scaleTiming(time,speed):
+    ##speed range 1-255 (units=?)
+    ##speed=0 is stopped
+    maxSpeed=255
+    minSpeed=1
+    print("Scale "+str(time)+" Seconds for "+str(speed)+" Speed")
+    print("Percentage Max speed is "+str((speed/maxSpeed)*100))
+    return (time*(maxSpeed/speed))#reverse scales percentage to get time delay based on speed
+
+#music functions
+#Note range A3-G5
+def playtone(frequency):
+    b.play(Tone(frequency))
+    time.sleep(0.5)
+    b.stop()
+
+def finishSong():
+    song = ["A4","P","B4","C4"]
+    song=song[::-1]
+    playsong(song)
+
+def troubleSong():
+    song = ["A3","A4","A5"]
+    song=song[::-1]
+    playsong(song)
+
+def startupSong():
+    song = ["A4","P","B4","C4"]
+    playsong(song)
+
+def ode2JoySong():
+    song = ["C4","C4","D4","E4","P","E4","D4","C4","B3","P","B3","B3","C4","D4"]
+    playsong(song)
+
+    
+def playsong(mysong):
+    #print(str(len(mysong)))
+    for i in range(len(mysong)):
+        if (mysong[i] == "P"):
+            time.sleep(0.25)
+        else:
+            playtone(mysong[i])
+
+#play song every # min 
+def playSongOnRepeat(time,methodToRun):
+    global current_datetime,next_song_run
+    while (True):
+        #next_song_run
+        current_datetime=datetime.datetime.now()
+        if current_datetime>=next_song_run:
+            print("Playing Song every "+str(time)+" minute(s)")
+            methodToRun()
+            next_song_run=(datetime.datetime.now() + datetime.timedelta(minutes=time))#minutes=numInterval_Hours))#
+            print("Playing next song at "+str(next_song_run))
+            
+
+#Title Screen
 print("---------------------------------")
 print("-"+prog_name+" "+str(prog_version)+"  -")
 print("-Date:"+current_datetime.today().strftime('%Y-%h-%d')+"               -")
 print("---------------------------------")
-
+startupSong()
 time.sleep(2.00)
 
 #main
@@ -236,5 +328,6 @@ while (flag):
                 cycle_count=cycle_count+1
                 curDest=-1
             
-	
+    
 print("Exiting- Goodbye!")
+playSongOnRepeat(1,finishSong)
