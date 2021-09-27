@@ -9,6 +9,12 @@ import time
 import atexit
 import RPi.GPIO as GPIO
 import datetime
+import logging
+
+
+logging.basicConfig(filename='litterbox_main.log', level=logging.DEBUG)#litterbox_main.log
+
+prog_version=1.6
 
 import smtplib, ssl
 
@@ -20,7 +26,8 @@ password = "Ezekiel!180"#input("Type your password and press enter:")
 subject="Subject:"
 context = ssl.create_default_context()
 
-prog_version=1.4
+
+
 prog_name="Custom Pi-Litterbox Robot"
 mode = GPIO.getmode()
 
@@ -80,20 +87,20 @@ motorSpeed=50#250#150
 # recommended for auto-disabling motors on shutdown!
 def turnOffMotors():
     global curDir
-    #print("Stop Motors")
+    #logAndPrint("Info","Stop Motors")
     mh.getMotor(1).run(Raspi_MotorHAT.RELEASE)
     mh.getMotor(2).run(Raspi_MotorHAT.RELEASE)
     mh.getMotor(3).run(Raspi_MotorHAT.RELEASE)
     mh.getMotor(4).run(Raspi_MotorHAT.RELEASE)
     time.sleep(1.00)
     curDir=0
-    #print("Done")
+    #logAndPrint("Info","Done")
 atexit.register(turnOffMotors)
 
 def reverseCurMotorDir(dir):
-    #print("reverseCurMotorDir")
+    #logAndPrint("Info","reverseCurMotorDir")
     turnOffMotors()
-    #print("Current Direction:"+str(dir))
+    #logAndPrint("Info","Current Direction:"+str(dir))
     if dir==-1:
         motorForward()
     else:
@@ -111,7 +118,7 @@ def motorForward():
         myMotor.setSpeed(i)
         time.sleep(0.01)
     curDir=1
-    #print(str(curDir))
+    #logAndPrint("Info",str(curDir))
 
 def motorReverse():
     turnOffMotors()
@@ -143,9 +150,9 @@ def move2Home():
 
 #moves globe to shift waste from litter and dump
 def move2Dump():
-    print("Preparing to Dump")
+    logAndPrint("Info","Preparing to Dump")
     global curDest
-    #print(str(curPos))
+    #logAndPrint("Info",str(curPos))
     if curPos==0:
         curDest=1
         motorForward()
@@ -153,14 +160,14 @@ def move2Dump():
         motorForward()
     else:
         motorReverse()
-    #print("Finished!")
-    #print("Next run date/time:"+str(next_run_datetime))
+    #logAndPrint("Info","Finished!")
+    #logAndPrint("Info","Next run date/time:"+str(next_run_datetime))
         
 #moves globe to completely dump litter
 def move2FullDump():
-    print("Preparing to Full Dump")
+    logAndPrint("Info","Preparing to Full Dump")
     global curDest
-    #print(str(curPos))
+    #logAndPrint("Info",str(curPos))
     if curPos==0:
         curDest=1
         motorReverse()
@@ -168,30 +175,30 @@ def move2FullDump():
         motorReverse()
     else:
         motorForward()
-    #print("Finished!")
-    #print("Next run date/time:"+str(next_run_datetime))
+    #logAndPrint("Info","Finished!")
+    #logAndPrint("Info","Next run date/time:"+str(next_run_datetime))
     
 #HallEffect Sensor functions
 GPIO.setup(GPIO_PIR,GPIO.IN,pull_up_down=GPIO.PUD_UP)
 def printDumpDetected(GPIO_PIR):
     global curPos,lastDir
-    #print(str(sflag))
+    #logAndPrint("Info",str(sflag))
     if curDest==1 and curDir==1 and curPos!=1:
         #global counter
         curPos=1
         lastDir=curDir
-        #print("printDumpDetected "+str(counter)+" "+str(lastDir))
+        #logAndPrint("Info","printDumpDetected "+str(counter)+" "+str(lastDir))
         #counter=counter+1
         motorStop()
-        print("Reached Dump")
-        #print("Stop")
+        logAndPrint("Info","Reached Dump")
+        #logAndPrint("Info","Stop")
         #time.sleep(20.00)#10.00)
         countDown(dump_time)
-        print("Going Home")
+        logAndPrint("Info","Going Home")
         move2Home()
     else:
         if curDest==0 and curDir==1:
-            print("Not Stopping at Dump, heading to Home")
+            logAndPrint("Info","Not Stopping at Dump, heading to Home")
         
     #elif
         
@@ -200,30 +207,30 @@ GPIO.add_event_detect(GPIO_PIR,GPIO.RISING,callback=printDumpDetected)
 
 def printHomeDetected(GPIO_PIR2):
     global curPos,lastDir
-    #print(str(sflag))
+    #logAndPrint("Info",str(sflag))
     if curDest==0 and curDir==-1 and curPos!=0:
         #global counter2
         lastDir=curDir
-        #print("printHomeDetected "+str(counter2)+" "+str(lastDir))
+        #logAndPrint("Info","printHomeDetected "+str(counter2)+" "+str(lastDir))
         #counter2=counter2+1
         #motorStop()
-        #print("Stop")
+        #logAndPrint("Info","Stop")
         time.sleep(scaleTiming(5.00,motorSpeed))#time.sleep(3.00)
         reverseCurMotorDir(lastDir)
         time.sleep(scaleTiming(4.00,motorSpeed))#time.sleep(2.00)
         motorStop()
         curPos=0
-        print("Reached Home")
+        logAndPrint("Info","Reached Home")
     else:
         if curDest==1 and curDir==-1:
-            print("Not Stopping at Home, heading to Dump")
+            logAndPrint("Info","Not Stopping at Home, heading to Dump")
         
 GPIO.add_event_detect(GPIO_PIR2,GPIO.RISING,callback=printHomeDetected)
 
 #Manual Interaction Functions
 #def manualOverride:
-#    print("Manual Override Detected")
-#    print("Run Cycle")
+#    logAndPrint("Info","Manual Override Detected")
+#    logAndPrint("Info","Run Cycle")
 #    cycle_num_max=cycle_num_max+1
 #    next_run_datetime=datetime.datetime.now()
 
@@ -231,22 +238,22 @@ GPIO.add_event_detect(GPIO_PIR2,GPIO.RISING,callback=printHomeDetected)
 
 #code for enabling ircontrol of box
 #def irOverride:
-#    print("IR Override Detected")
+#    logAndPrint("Info","IR Override Detected")
 
 #Misc functions
 def countDown(num):
-    print("waiting for "+str(num)+"secs")
+    logAndPrint("Info","waiting for "+str(num)+"secs")
     for i in range(num):
         time.sleep(1)
-        print(str(i+1))
+        logAndPrint("Info",str(i+1))
 
 def scaleTiming(time,speed):
     ##speed range 1-255 (units=?)
     ##speed=0 is stopped
     maxSpeed=255
     minSpeed=1
-    print("Scale "+str(time)+" Seconds for "+str(speed)+" Speed")
-    print("Percentage Max speed is "+str((speed/maxSpeed)*100))
+    logAndPrint("Info","Scale "+str(time)+" Seconds for "+str(speed)+" Speed")
+    logAndPrint("Info","Percentage Max speed is "+str((speed/maxSpeed)*100))
     return (time*(maxSpeed/speed))#reverse scales percentage to get time delay based on speed
 
 #music functions
@@ -276,7 +283,7 @@ def ode2JoySong():
 
     
 def playsong(mysong):
-    #print(str(len(mysong)))
+    #logAndPrint("Info",str(len(mysong)))
     for i in range(len(mysong)):
         if (mysong[i] == "P"):
             time.sleep(0.25)
@@ -301,17 +308,33 @@ def playSongOnRepeat(time,methodToRun):
         #next_song_run
         current_datetime=datetime.datetime.now()
         if current_datetime>=next_song_run:
-            print("Playing Song every "+str(time)+" minute(s)")
+            logAndPrint("Info","Playing Song every "+str(time)+" minute(s)")
             methodToRun()
             next_song_run=(datetime.datetime.now() + datetime.timedelta(minutes=time))#minutes=numInterval_Hours))#
-            print("Playing next song at "+str(next_song_run))
-            
+            logAndPrint("Info","Playing next song at "+str(next_song_run))
+
+#console prints messages and logs them to the log file
+def logAndPrint(msgType,msg):
+    #current_datetime=datetime.datetime.now()#.today().strftime('%Y-%h-%d')
+    message=str(current_datetime)+"|"+msg
+    print(message)
+    if msgType=="Debug":
+        logging.debug(message)
+    elif msgType=="Info":
+        logging.info(message)
+    elif msgType=="Warning":
+        logging.warning(message)
+    elif msgType=='Error':
+        logging.error(message)
+    else:
+        logging.error(message)
+
 
 #Title Screen
-print("---------------------------------")
-print("-"+prog_name+" "+str(prog_version)+"  -")
-print("-Date:"+current_datetime.today().strftime('%Y-%h-%d')+"               -")
-print("---------------------------------")
+logAndPrint("Info","---------------------------------")
+logAndPrint("Info","-"+prog_name+" "+str(prog_version)+"  -")
+logAndPrint("Info","-Date:"+current_datetime.today().strftime('%Y-%h-%d')+"               -")
+logAndPrint("Info","---------------------------------")
 startupSong()
 notify("Starting piLitterRobot","piLitterRobot has started it's run cycle. Will cycle "+str(cycle_num_max)+" times every "+str(numInterval_Hours)+" hours")
 
@@ -319,38 +342,41 @@ time.sleep(2.00)
 
 #main
 while (flag):
-    #print("Next run date/time:"+str(next_run_datetime))
+    #logAndPrint("Info","Next run date/time:"+str(next_run_datetime))
     current_datetime=datetime.datetime.now()
-    #print("motor direction:"+str(curDir))
+    #logAndPrint("Info","motor direction:"+str(curDir))
     if current_datetime>=next_run_datetime and cycle_count<=cycle_num_max and curDir==0:
         
         if cycle_count>1:
-            print("Time to clean the litter!")
+            logAndPrint("Info","Time to clean the litter!")#logAndPrint("Info","Time to clean the litter!")
             
-        print("Current run date/time:"+str(current_datetime))
-        #print("motor direction:"+str(curDir))
+        logAndPrint("Info","Current run date/time:"+str(current_datetime))
+        #logAndPrint("Info","motor direction:"+str(curDir))
         next_run_datetime=(datetime.datetime.now() + datetime.timedelta(hours=numInterval_Hours))#minutes=numInterval_Hours))#
         if (cycle_count+1)<=cycle_num_max:
-            print("Next run date/time:"+str(next_run_datetime))
+            logAndPrint("Info","Next run date/time:"+str(next_run_datetime))
         
         if cycle_count==1:
-            print("Proceeding to run initial Dump and return to Home calibration!")
+            logAndPrint("Info","Proceeding to run initial Dump and return to Home calibration!")
             
         move2Dump()
         
     else:
-        #print(str(curDir)+" "+str(curPos)+" "+str(curDest)+" "+str(cycle_count)+" "+str(cycle_num_max))
+        #logAndPrint("Info",str(curDir)+" "+str(curPos)+" "+str(curDest)+" "+str(cycle_count)+" "+str(cycle_num_max))
         if curDir==0 and curPos==0 and curDest==0:
-            #print(str(cycle_count)+" "+str(cycle_num_max)+str(cycle_count>=cycle_num_max))
+            #logAndPrint("Info",str(cycle_count)+" "+str(cycle_num_max)+str(cycle_count>=cycle_num_max))
             if cycle_count>=cycle_num_max:# and curDir==0 and curPos==0:
-                print("Max Number of Cycles Reached:"+str(cycle_num_max))
+                logAndPrint("Info","Max Number of Cycles Reached:"+str(cycle_num_max))
                 flag=false
                 time.sleep(60)
             else:
-                print("Cycle "+str(cycle_count)+" of "+str(cycle_num_max))
+                logAndPrint("Info","Cycle "+str(cycle_count)+" of "+str(cycle_num_max))
                 cycle_count=cycle_count+1
                 curDest=-1
             
+
+    
+logAndPrint("Info","Exiting- Goodbye!")
 notify("Starting piLitterRobot","piLitterRobot has used up its "+str(cycle_num_max)+" run cycle(s).")   
-print("Exiting- Goodbye!")
+
 playSongOnRepeat(1,finishSong)
