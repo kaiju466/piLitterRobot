@@ -4,28 +4,45 @@ from gpiozero import Buzzer
 from gpiozero import TonalBuzzer
 from gpiozero.tones import Tone
 
-
 import time
 import atexit
 import RPi.GPIO as GPIO
 import datetime
 import logging
 import os
-
-fname = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'litterbox_main.log')
-print(str(fname))
-os.remove(fname)
-logging.basicConfig(filename=fname, level=logging.DEBUG)#litterbox_main.log
-
-prog_version=1.6
-
+import ConfigParser
 import smtplib, ssl
 
-port = 587  # For starttls
-smtp_server = "smtp.gmail.com"
-sender_email = "piLitterRobot@gmail.com"
-receiver_email = "kaiju466@gmail.com"
-password = "Ezekiel!180"#input("Type your password and press enter:")
+
+# Load the Log file
+logname = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'litterbox_main.log')
+print(str(logname))
+os.remove(logname)
+logging.basicConfig(filename=logname, level=logging.DEBUG)#litterbox_main.log
+
+# Load the configuration file
+configname= os.path.join(os.path.dirname(os.path.realpath(__file__)), 'Litterbox_main.ini')
+config = configparser.ConfigParser()
+config.sections()
+config.read(configname)
+
+
+
+# Load the configuration file
+with open(logname) as f:
+    main_config = f.read()
+config = ConfigParser.RawConfigParser(allow_no_value=True)
+config.readfp(io.BytesIO(main_config))
+
+
+prog_version=1.7
+
+
+port = config.get("Email", "port")#587  # For starttls
+smtp_server = config.get("Email","smtp_server")#"smtp.gmail.com"
+sender_email = config.get("Email","SenderEmail")#"piLitterRobot@gmail.com"
+receiver_email = config.get("Email","ReceiverEmail")#"kaiju466@gmail.com"
+password = config.get("Email","SndPwd")#input("Type your password and press enter:")
 subject="Subject:"
 context = ssl.create_default_context()
 
@@ -164,7 +181,7 @@ def move2Dump():
     else:
         motorReverse()
     #logAndPrint("Info","Finished!")
-    #logAndPrint("Info","Next run date/time:"+str(next_run_datetime))
+    #logAndPrint("Info","Neimport ConfigParserxt run date/time:"+str(next_run_datetime))
         
 #moves globe to completely dump litter
 def move2FullDump():

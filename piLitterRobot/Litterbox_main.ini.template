@@ -1,0 +1,13 @@
+[MotorControl]
+Speed=50
+DumpWaitTime=20
+numInterval_Hours=6
+
+[Email]
+SenderEmail=PUTYOURROBOTSEMAILHERE
+smtp_server=smtp.gmail.com
+port=587
+SndPwd=PUTYOURPASSWORDHERE
+ReceiverEmail=PUTYOUREMAILHERE
+
+
