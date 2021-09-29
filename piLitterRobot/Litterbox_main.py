@@ -10,13 +10,13 @@ import RPi.GPIO as GPIO
 import datetime
 import logging
 import os
-import ConfigParser
+import configparser
 import smtplib, ssl
 
 
 # Load the Log file
 logname = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'litterbox_main.log')
-print(str(logname))
+#print(str(logname))
 os.remove(logname)
 logging.basicConfig(filename=logname, level=logging.DEBUG)#litterbox_main.log
 
@@ -26,13 +26,6 @@ config = configparser.ConfigParser()
 config.sections()
 config.read(configname)
 
-
-
-# Load the configuration file
-with open(logname) as f:
-    main_config = f.read()
-config = ConfigParser.RawConfigParser(allow_no_value=True)
-config.readfp(io.BytesIO(main_config))
 
 
 prog_version=1.7
@@ -45,7 +38,6 @@ receiver_email = config.get("Email","ReceiverEmail")#"kaiju466@gmail.com"
 password = config.get("Email","SndPwd")#input("Type your password and press enter:")
 subject="Subject:"
 context = ssl.create_default_context()
-
 
 
 prog_name="Custom Pi-Litterbox Robot"
