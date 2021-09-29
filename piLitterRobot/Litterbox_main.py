@@ -10,9 +10,12 @@ import atexit
 import RPi.GPIO as GPIO
 import datetime
 import logging
+import os
 
-
-logging.basicConfig(filename='litterbox_main.log', level=logging.DEBUG)#litterbox_main.log
+fname = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'litterbox_main.log')
+print(str(fname))
+os.remove(fname)
+logging.basicConfig(filename=fname, level=logging.DEBUG)#litterbox_main.log
 
 prog_version=1.6
 
