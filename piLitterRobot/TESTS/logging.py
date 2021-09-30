@@ -39,10 +39,10 @@ print("---------------------------------")
 
 time.sleep(2.00)
 
-logAndPrint("Debug","Debug test")
-logAndPrint("Info","Info test")
-logAndPrint("Warning","Warning test")
-logAndPrint("Error","Error test")
+logAndPrint(logging.debug,"Debug test")
+logAndPrint(logging.info,"Info test")
+logAndPrint(logging.warning,"Warning test")
+logAndPrint(logging.error,"Error test")
 
 
 
