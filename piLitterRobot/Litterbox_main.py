@@ -332,20 +332,27 @@ def playSongOnRepeat(time,methodToRun):
             logAndPrint("Info","Playing next song at "+str(next_song_run))
 
 #console prints messages and logs them to the log file
-def logAndPrint(msgType,msg):
+#def logAndPrint(msgType,msg):
+#    #current_datetime=datetime.datetime.now()#.today().strftime('%Y-%h-%d')
+#    message=str(current_datetime)+"|"+msg
+#    print(message)
+#    if msgType=="Debug":
+#        logging.debug(message)
+#    elif msgType=="Info":
+#        logging.info(message)
+#   elif msgType=="Warning":
+#        logging.warning(message)
+#    elif msgType=='Error':
+#        logging.error(message)
+#    else:
+#        logging.error(message)
+
+#console prints messages and logs them to the log file
+def logAndPrint(msgMethodType,msg):
     #current_datetime=datetime.datetime.now()#.today().strftime('%Y-%h-%d')
     message=str(current_datetime)+"|"+msg
     print(message)
-    if msgType=="Debug":
-        logging.debug(message)
-    elif msgType=="Info":
-        logging.info(message)
-    elif msgType=="Warning":
-        logging.warning(message)
-    elif msgType=='Error':
-        logging.error(message)
-    else:
-        logging.error(message)
+    msgMethodType(message)
 
 
 #Title Screen
