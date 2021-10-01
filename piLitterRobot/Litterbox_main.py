@@ -385,7 +385,7 @@ while (flag):
             #logAndPrint("Info",str(cycle_count)+" "+str(cycle_num_max)+str(cycle_count>=cycle_num_max))
             if cycle_count>=cycle_num_max:# and curDir==0 and curPos==0:
                 logAndPrint("Info","Max Number of Cycles Reached:"+str(cycle_num_max))
-                flag=false
+                flag=False
                 time.sleep(60)
             else:
                 logAndPrint("Info","Cycle "+str(cycle_count)+" of "+str(cycle_num_max))
