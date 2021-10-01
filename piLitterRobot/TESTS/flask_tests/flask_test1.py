@@ -1,5 +1,6 @@
-#!/usr/bin/python
+
 from flask import Flask, render_template
+
 import datetime
 app = Flask(__name__)
 
@@ -24,17 +25,19 @@ app = Flask(__name__)
 #variables
 prog_version = 1.0
 prog_name = "Flask Hello Test Program 1"
-mode = GPIO.getmode()
+#mode = GPIO.getmode()
 current_datetime=datetime.date.today()
 next_run_datetime=datetime.datetime(2021, 7, 12, 9, 55, 0, 342380)
 
-GPIO.setmode(GPIO.BCM)
-GPIO.setwarnings(False)
+#GPIO.setmode(GPIO.BCM)
+#GPIO.setwarnings(False)
 
 #methods and functions here
 @app.route("/")#use this to designate function that page will go to on root
 def index():
+    print("Hello")
     return 'Hello world'
+
 @app.route("/hello")
 def hello():
    now = datetime.datetime.now()
@@ -43,22 +46,26 @@ def hello():
       'title' : 'HELLO!',
       'time': timeString
       }
+   print(templateData)
    return render_template('index.html', **templateData)
 
-
+@app.route("/hello2")
+def hello2():
+    print("Hello")
+    return 'Hello world'
 
 # Title Screen
 print("---------------------------------")
 print("-" + prog_name + " " + str(prog_version) + "  -")
 #print("-Date:" + current_datetime.today().strftime('%Y-%h-%d') + "               -")
 print("---------------------------------")
-time.sleep(2.00)
+#time.sleep(2.00)
 print("Start Test")
 
 
 #start test code here
 if __name__ == "__main__":
-   app.run(host='0.0.0.0', port=80, debug=True)
+   app.run(host='0.0.0.0', port=5000, debug=True)
 
 
 print("Exiting Test- Goodbye!")
