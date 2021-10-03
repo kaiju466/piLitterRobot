@@ -3,7 +3,11 @@ from Raspi_MotorHAT import Raspi_MotorHAT, Raspi_DCMotor
 from gpiozero import Buzzer
 from gpiozero import TonalBuzzer
 from gpiozero.tones import Tone
+from flask import Flask, render_template
+from multiprocessing import Process, Value
 
+import datetime
+app = Flask(__name__)
 import time
 import atexit
 import RPi.GPIO as GPIO
@@ -332,76 +336,106 @@ def playSongOnRepeat(time,methodToRun):
             logAndPrint(logging.info,"Playing next song at "+str(next_song_run))
 
 #console prints messages and logs them to the log file
-#def logAndPrint(msgType,msg):
-#    #current_datetime=datetime.datetime.now()#.today().strftime('%Y-%h-%d')
-#    message=str(current_datetime)+"|"+msg
-#    print(message)
-#    if msgType=="Debug":
-#        logging.debug(message)
-#    elif msgType=="Info":
-#        logging.info(message)
-#   elif msgType=="Warning":
-#        logging.warning(message)
-#    elif msgType=='Error':
-#        logging.error(message)
-#    else:
-#        logging.error(message)
-
-#console prints messages and logs them to the log file
 def logAndPrint(msgMethodType,msg):
     #current_datetime=datetime.datetime.now()#.today().strftime('%Y-%h-%d')
     message=str(current_datetime)+"|"+msg
     print(message)
     msgMethodType(message)
 
+#flask methods and functions here
+@app.route("/")#use this to designate function that page will go to on root
+def index():
+    print("Hello")
+    return 'Hello world'
 
-#Title Screen
-logAndPrint(logging.info,"---------------------------------")
-logAndPrint(logging.info,"-"+prog_name+" "+str(prog_version)+"  -")
-logAndPrint(logging.info,"-Date:"+current_datetime.today().strftime('%Y-%h-%d')+"               -")
-logAndPrint(logging.info,"---------------------------------")
-startupSong()
-notify("Starting piLitterRobot","piLitterRobot has started it's run cycle. Will cycle "+str(cycle_num_max)+" times every "+str(numInterval_Hours)+" hours")
+@app.route("/hello")
+def hello():
+   now = datetime.datetime.now()
+   timeString = now.strftime("%Y-%m-%d %H:%M")
+   templateData = {
+      'title' : 'HELLO!',
+      'time': timeString
+      }
+   print(templateData)
+   return render_template('index.html', **templateData)
 
-time.sleep(2.00)
+#flask startup
+#print(__name__)
+#if __name__ == "__main__":
+#app.run(host='192.168.1.134', port=5000, debug=True)
+   #__name__="__main2__"
+#print("Post flask")
 
-#main
-while (flag):
-    #logAndPrint(logging.info,"Next run date/time:"+str(next_run_datetime))
-    current_datetime=datetime.datetime.now()
-    #logAndPrint(logging.info,"motor direction:"+str(curDir))
-    if current_datetime>=next_run_datetime and cycle_count<=cycle_num_max and curDir==0:
-        
-        if cycle_count>1:
-            logAndPrint(logging.info,"Time to clean the litter!")#logAndPrint(logging.info,"Time to clean the litter!")
-            
-        logAndPrint(logging.info,"Current run date/time:"+str(current_datetime))
+def titleScreen():
+    #Title Screen
+    logAndPrint(logging.info,"---------------------------------")
+    logAndPrint(logging.info,"-"+prog_name+" "+str(prog_version)+"  -")
+    logAndPrint(logging.info,"-Date:"+current_datetime.today().strftime('%Y-%h-%d')+"               -")
+    logAndPrint(logging.info,"---------------------------------")
+    startupSong()
+    notify("Starting piLitterRobot","piLitterRobot has started it's run cycle. Will cycle "+str(cycle_num_max)+" times every "+str(numInterval_Hours)+" hours")
+    time.sleep(2.00)
+
+
+
+def main():
+    titleScreen()
+    #main
+    print("Running Main")
+    global curPos,lastDir,flag,curDir,cycle_num_max,cycle_count,next_run_datetime,current_datetime
+    while (flag):
+        #logAndPrint(logging.info,"Next run date/time:"+str(next_run_datetime))
+        current_datetime=datetime.datetime.now()
         #logAndPrint(logging.info,"motor direction:"+str(curDir))
-        next_run_datetime=(datetime.datetime.now() + datetime.timedelta(hours=numInterval_Hours))#minutes=numInterval_Hours))#
-        if (cycle_count+1)<=cycle_num_max:
-            logAndPrint(logging.info,"Next run date/time:"+str(next_run_datetime))
-        
-        if cycle_count==1:
-            logAndPrint(logging.info,"Proceeding to run initial Dump and return to Home calibration!")
+        if current_datetime>=next_run_datetime and cycle_count<=cycle_num_max and curDir==0:
             
-        move2Dump()
-        
-    else:
-        #logAndPrint(logging.info,str(curDir)+" "+str(curPos)+" "+str(curDest)+" "+str(cycle_count)+" "+str(cycle_num_max))
-        if curDir==0 and curPos==0 and curDest==0:
-            #logAndPrint(logging.info,str(cycle_count)+" "+str(cycle_num_max)+str(cycle_count>=cycle_num_max))
-            if cycle_count>=cycle_num_max:# and curDir==0 and curPos==0:
-                logAndPrint(logging.info,"Max Number of Cycles Reached:"+str(cycle_num_max))
-                flag=false
-                time.sleep(60)
-            else:
-                logAndPrint(logging.info,"Cycle "+str(cycle_count)+" of "+str(cycle_num_max))
-                cycle_count=cycle_count+1
-                curDest=-1
+            if cycle_count>1:
+                logAndPrint(logging.info,"Time to clean the litter!")#logAndPrint(logging.info,"Time to clean the litter!")
+                
+            logAndPrint(logging.info,"Current run date/time:"+str(current_datetime))
+            #logAndPrint(logging.info,"motor direction:"+str(curDir))
+            next_run_datetime=(datetime.datetime.now() + datetime.timedelta(hours=numInterval_Hours))#minutes=numInterval_Hours))#
+            if (cycle_count+1)<=cycle_num_max:
+                logAndPrint(logging.info,"Next run date/time:"+str(next_run_datetime))
             
+            if cycle_count==1:
+                logAndPrint(logging.info,"Proceeding to run initial Dump and return to Home calibration!")
+                
+            move2Dump()
+            
+        else:
+            #logAndPrint(logging.info,str(curDir)+" "+str(curPos)+" "+str(curDest)+" "+str(cycle_count)+" "+str(cycle_num_max))
+            if curDir==0 and curPos==0 and curDest==0:
+                #logAndPrint(logging.info,str(cycle_count)+" "+str(cycle_num_max)+str(cycle_count>=cycle_num_max))
+                if cycle_count>=cycle_num_max:# and curDir==0 and curPos==0:
+                    logAndPrint(logging.info,"Max Number of Cycles Reached:"+str(cycle_num_max))
+                    flag=false
+                    time.sleep(60)
+                else:
+                    logAndPrint(logging.info,"Cycle "+str(cycle_count)+" of "+str(cycle_num_max))
+                    cycle_count=cycle_count+1
+                    curDest=-1
+                
 
-    
-logAndPrint(logging.info,"Exiting- Goodbye!")
-notify("Starting piLitterRobot","piLitterRobot has used up its "+str(cycle_num_max)+" run cycle(s).")   
+        
+    logAndPrint(logging.info,"Exiting- Goodbye!")
+    notify("Starting piLitterRobot","piLitterRobot has used up its "+str(cycle_num_max)+" run cycle(s).")   
 
-playSongOnRepeat(1,finishSong)
+    playSongOnRepeat(1,finishSong)
+
+#Start here
+#titleScreen()
+#main()
+
+if __name__ == "__main__":
+   p = Process(target=main, args=())
+   p.start()  
+   app.run(host='192.168.1.134', port=5000, debug=True, use_reloader=False)
+   p.join()
+   print("Post flask")
+   #flask startup
+#print(__name__)
+#if __name__ == "__main__":
+#app.run(host='192.168.1.134', port=5000, debug=True)
+   #__name__="__main2__"
+#print("Post flask")
