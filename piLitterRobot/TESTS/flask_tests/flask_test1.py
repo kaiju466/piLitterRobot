@@ -54,6 +54,11 @@ def hello2():
     print("Hello")
     return 'Hello world'
 
+@app.route("/emergencystop",methods=['POST'])
+def emergencystop():
+    print("emergencystop")
+    return 'emergencystop'
+
 # Title Screen
 print("---------------------------------")
 print("-" + prog_name + " " + str(prog_version) + "  -")
