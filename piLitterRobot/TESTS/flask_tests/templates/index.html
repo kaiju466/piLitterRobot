@@ -8,26 +8,26 @@
 <h1 style="color: #5e9ca0; text-align: center;">PiLitterRobot</h1>
 <p style="text-align: center;"><button type="button">Manual Cycle</button></p>
 
-<button type="button" onclick="window.location.href='{{ url_for( 'emergencystop') }}';">Emergency Stop</button>
+<p style="text-align: center;"><button type="button" onclick="window.location.href='{{ url_for( 'emergencystop') }}';">Emergency Stop</button></p>
 
 <p style="text-align: center;">Status</p>
 <table class="editorDemoTable" style="height: 110px; width: 312px; text-align: center; border-style: solid; margin-left: auto; margin-right: auto;" border="black">
 <tbody>
 <tr>
-<td style="width: 201.854px;">Current direction/motor direction</td>
-<td style="width: 256.146px; text-align: center;">Unknown</td>
+<td style="width: 201.854px;">Current Motor Direction</td>
+<td style="width: 256.146px; text-align: center;">{{ direction }}</td>
 </tr>
 <tr>
 <td style="width: 201.854px;">Current Destination</td>
-<td style="width: 256.146px; text-align: center;">Unknown</td>
+<td style="width: 256.146px; text-align: center;">{{ destination }}</td>
 </tr>
 <tr>
 <td style="width: 201.854px;">Next Run time</td>
-<td style="width: 256.146px; text-align: center;">Unknown</td>
+<td style="width: 256.146px; text-align: center;">{{ nexttime }}</td>
 </tr>
 <tr>
 <td style="width: 201.854px;">Hours between runs</td>
-<td style="width: 256.146px; text-align: center;">Unknown</td>
+<td style="width: 256.146px; text-align: center;">{{ hoursbtwnruns }}</td>
 </tr>
 </tbody>
 </table>

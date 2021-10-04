@@ -35,8 +35,17 @@ next_run_datetime=datetime.datetime(2021, 7, 12, 9, 55, 0, 342380)
 #methods and functions here
 @app.route("/")#use this to designate function that page will go to on root
 def index():
-    print("Hello")
-    return 'Hello world'
+    now = datetime.datetime.now()
+    timeString = now.strftime("%Y-%m-%d %H:%M")
+    templateData = {
+        'direction': 'Unknown1',
+        'time': timeString,
+        'destination':'Unknown2',
+        'nexttime':'Unknown3',
+        'hoursbtwnruns':'Unknown4'
+    }
+    print(templateData)
+    return render_template('index.html', **templateData)
 
 @app.route("/hello")
 def hello():
