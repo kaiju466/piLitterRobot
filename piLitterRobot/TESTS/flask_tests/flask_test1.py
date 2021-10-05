@@ -28,8 +28,33 @@ app = Flask(__name__)
 prog_version = 1.0
 prog_name = "Flask Hello Test Program 1"
 #mode = GPIO.getmode()
+cycle_count=1
+cycle_num_max=4
+
 current_datetime=datetime.date.today()
+
 next_run_datetime=datetime.datetime(2021, 7, 12, 9, 55, 0, 342380)
+next_song_run=datetime.datetime(2021, 7, 12, 9, 55, 0, 342380)
+
+curDir=0#-1=reverse,0=stopped,1=forward
+curPos=-1#Unknown=-1,Home=0,Dump=1
+curDest=1#Unknown=-1,Home=0,Dump=1
+
+numInterval_Hours=6
+dump_time=20#in secs
+
+
+places = {
+        '0': 'home',
+        '1': 'dump',
+        '-1': 'Unknown'
+}
+direction = {
+        '0': 'stopped',
+        '1': 'forward',
+        '-1': 'reverse'
+}
+
 
 #GPIO.setmode(GPIO.BCM)
 #GPIO.setwarnings(False)
@@ -43,9 +68,9 @@ def index():
     f = open(logname, "r")
 
     templateData = {
-        'direction': str(curDir),
+        'direction': str(direction[curDir]),
         'time': timeString,
-        'destination': str(curDest),
+        'destination': str(places[curDest]),
         'nexttime': str(next_run_datetime),
         'hoursbtwnruns': str(numInterval_Hours),
         'msglog': f.read()
@@ -78,9 +103,9 @@ def emergencystop():
     f = open(logname, "r")
 
     templateData = {
-        'direction': str(curDir),
+        'direction': str(direction[curDir]),
         'time': timeString,
-        'destination': str(curDest),
+        'destination': str(places[curDest]),
         'nexttime': str(next_run_datetime),
         'hoursbtwnruns': str(numInterval_Hours),
         'msglog': f.read()
@@ -97,9 +122,9 @@ def manualrun():
     f = open(logname, "r")
 
     templateData = {
-        'direction': str(curDir),
+        'direction': str(direction[curDir]),
         'time': timeString,
-        'destination': str(curDest),
+        'destination': str(places[curDest]),
         'nexttime': str(next_run_datetime),
         'hoursbtwnruns': str(numInterval_Hours),
         'msglog': f.read()

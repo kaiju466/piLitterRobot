@@ -85,6 +85,17 @@ curDest=1#Unknown=-1,Home=0,Dump=1
 numInterval_Hours=6
 dump_time=20#in secs
 
+places = {
+        '0': 'home',
+        '1': 'dump',
+        '-1': 'Unknown'
+}
+direction = {
+        '0': 'stopped',
+        '1': 'forward',
+        '-1': 'reverse'
+}
+
 #GPIO.setup(4, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 #cb = ButtonHandler(4, real_cb, edge='rising', bouncetime=100)
 #cb.start()
@@ -365,7 +376,7 @@ def index():
 @app.route("/emergencystop",methods=['POST','GET'])
 def emergencystop():
     global curPos,lastDir,curDir,curDest,next_run_datetime
-    print("emergencystop")
+    logAndPrint(logging.info,"emergencystop")
     motorStop()
     now = datetime.datetime.now()
     timeString = now.strftime("%Y-%m-%d %H:%M")
@@ -385,7 +396,7 @@ def emergencystop():
 @app.route("/manualrun",methods=['POST','GET'])
 def manualrun():
     global curPos,lastDir,next_run_datetime,current_datetime,curDest
-    print("manualrun")
+    logAndPrint(logging.info,"manualrun")
     next_run_datetime=current_datetime
     now = datetime.datetime.now()
     timeString = now.strftime("%Y-%m-%d %H:%M")
