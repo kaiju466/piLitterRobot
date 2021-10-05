@@ -345,19 +345,55 @@ def logAndPrint(msgMethodType,msg):
 #flask methods and functions here
 @app.route("/")#use this to designate function that page will go to on root
 def index():
-    print("Hello")
-    return 'Hello world'
+    global curPos,lastDir,curDir,curDest
+    now = datetime.datetime.now()
+    timeString = now.strftime("%Y-%m-%d %H:%M")
+    templateData = {
+        'direction': 'Unknown1',
+        'time': timeString,
+        'destination':'Unknown2',
+        'nexttime':'Unknown3',
+        'hoursbtwnruns':'Unknown4',
+        'msglog':'Log goes here'
+    }
+    print(templateData)
+    return render_template('index.html', **templateData)
 
-@app.route("/hello")
-def hello():
-   now = datetime.datetime.now()
-   timeString = now.strftime("%Y-%m-%d %H:%M")
-   templateData = {
-      'title' : 'HELLO!',
-      'time': timeString
-      }
-   print(templateData)
-   return render_template('index.html', **templateData)
+@app.route("/emergencystop",methods=['POST','GET'])
+def emergencystop():
+    global curPos,lastDir,curDir,curDest
+    print("emergencystop")
+    motorStop()
+    now = datetime.datetime.now()
+    timeString = now.strftime("%Y-%m-%d %H:%M")
+    templateData = {
+        'direction': 'Unknown1',
+        'time': timeString,
+        'destination':'Unknown2',
+        'nexttime':'Unknown3',
+        'hoursbtwnruns':'Unknown4',
+        'msglog':'emergencystop'
+    }
+    print(templateData)
+    return render_template('index.html', **templateData)
+
+@app.route("/manualrun",methods=['POST','GET'])
+def manualrun():
+    global curPos,lastDir,next_run_datetime,current_datetime,curDest
+    print("manualrun")
+    next_run_datetime=current_datetime
+    now = datetime.datetime.now()
+    timeString = now.strftime("%Y-%m-%d %H:%M")
+    templateData = {
+        'direction': 'Unknown1',
+        'time': timeString,
+        'destination':'Unknown2',
+        'nexttime':'Unknown3',
+        'hoursbtwnruns':'Unknown4',
+        'msglog':'manualrun'
+    }
+    print(templateData)
+    return render_template('index.html', **templateData)
 
 #flask startup
 #print(__name__)

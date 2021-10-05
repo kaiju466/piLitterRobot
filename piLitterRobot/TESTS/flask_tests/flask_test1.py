@@ -42,7 +42,8 @@ def index():
         'time': timeString,
         'destination':'Unknown2',
         'nexttime':'Unknown3',
-        'hoursbtwnruns':'Unknown4'
+        'hoursbtwnruns':'Unknown4',
+        'msglog':'Log goes here'
     }
     print(templateData)
     return render_template('index.html', **templateData)
@@ -63,10 +64,37 @@ def hello2():
     print("Hello")
     return 'Hello world'
 
-@app.route("/emergencystop",methods=['POST'])
+@app.route("/emergencystop",methods=['POST','GET'])
 def emergencystop():
     print("emergencystop")
-    return 'emergencystop'
+    now = datetime.datetime.now()
+    timeString = now.strftime("%Y-%m-%d %H:%M")
+    templateData = {
+        'direction': 'Unknown1',
+        'time': timeString,
+        'destination':'Unknown2',
+        'nexttime':'Unknown3',
+        'hoursbtwnruns':'Unknown4',
+        'msglog':'emergencystop'
+    }
+    print(templateData)
+    return render_template('index.html', **templateData)
+
+@app.route("/manualrun",methods=['POST','GET'])
+def manualrun():
+    print("manualrun")
+    now = datetime.datetime.now()
+    timeString = now.strftime("%Y-%m-%d %H:%M")
+    templateData = {
+        'direction': 'Unknown1',
+        'time': timeString,
+        'destination':'Unknown2',
+        'nexttime':'Unknown3',
+        'hoursbtwnruns':'Unknown4',
+        'msglog':'manualrun'
+    }
+    print(templateData)
+    return render_template('index.html', **templateData)
 
 # Title Screen
 print("---------------------------------")

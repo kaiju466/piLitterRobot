@@ -3,32 +3,34 @@
 <link rel="stylesheet" href='/static/style.css' />
 <Title>piLitterBox Portal</Title>
 </head>
-<body>
+<p style="text-align: left;">&nbsp;</p>
+<p>&nbsp;</p>
 <h1 style="color: #5e9ca0; text-align: center;">PiLitterRobot</h1>
-<p style="text-align: center;"><button type="button">Manual Cycle</button></p>
 
-<p style="text-align: center;">Status</p>
-<table class="editorDemoTable" style="height: 110px; width: 312px; text-align: center; border-style: solid; margin-left: auto; margin-right: auto;" border="black">
+<p style="text-align: center;"><button type="button" onclick="window.location.href='{{ url_for( 'manualrun') }}';">Manual Cycle</button></p>
+<p style="text-align: center;"><button type="button" onclick="window.location.href='{{ url_for( 'emergencystop') }}';">Emergency Stop</button></p>
+
+<p style="text-align: center;"><strong>Status</strong></p>
+<table class="editorDemoTable" style="height: 40%; width: 80%; text-align: center; border-style: solid; margin-left: auto; margin-right: auto;" border="black">
 <tbody>
-<tr>
-<td style="width: 201.854px;">Current direction/motor direction</td>
-<td style="width: 256.146px; text-align: center;">Unknown</td>
+<tr style="height: 54px;">
+<td style="width: 140.467px; height: 54px;">Current Motor Direction</td>
+<td style="width: 225.533px; text-align: center; height: 54px;">{{ direction }}</td>
 </tr>
-<tr>
-<td style="width: 201.854px;">Current Destination</td>
-<td style="width: 256.146px; text-align: center;">Unknown</td>
+<tr style="height: 54px;">
+<td style="width: 140.467px; height: 54px;">Current Destination</td>
+<td style="width: 225.533px; text-align: center; height: 54px;">{{ destination }}</td>
 </tr>
-<tr>
-<td style="width: 201.854px;">Next Run time</td>
-<td style="width: 256.146px; text-align: center;">Unknown</td>
+<tr style="height: 54px;">
+<td style="width: 140.467px; height: 54px;">Next Run time</td>
+<td style="width: 225.533px; text-align: center; height: 54px;">{{ nexttime }}</td>
 </tr>
-<tr>
-<td style="width: 201.854px;">Hours between runs</td>
-<td style="width: 256.146px; text-align: center;">Unknown</td>
+<tr style="height: 24px;">
+<td style="width: 140.467px; height: 10px;">Hours between runs</td>
+<td style="width: 225.533px; text-align: center; height: 10px;">{{ hoursbtwnruns }}</td>
 </tr>
 </tbody>
 </table>
+<p style="text-align: center;"><textarea id="w3review" style="width: 80%; height: 126px;" cols="50" name="w3review" rows="4">{{ msglog }}</textarea></p>
 <p><strong>&nbsp;</strong></p>
 <p><strong>&nbsp;</strong></p>
-</body>
-</html>
