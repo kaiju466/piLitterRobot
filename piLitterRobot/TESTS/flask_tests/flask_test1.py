@@ -2,6 +2,8 @@
 from flask import Flask, render_template
 
 import datetime
+import socket
+
 app = Flask(__name__)
 
 #plan for website interface
@@ -35,15 +37,18 @@ next_run_datetime=datetime.datetime(2021, 7, 12, 9, 55, 0, 342380)
 #methods and functions here
 @app.route("/")#use this to designate function that page will go to on root
 def index():
+    global curPos, lastDir, curDir, curDest, next_run_datetime
     now = datetime.datetime.now()
     timeString = now.strftime("%Y-%m-%d %H:%M")
+    f = open(logname, "r")
+
     templateData = {
-        'direction': 'Unknown1',
+        'direction': str(curDir),
         'time': timeString,
-        'destination':'Unknown2',
-        'nexttime':'Unknown3',
-        'hoursbtwnruns':'Unknown4',
-        'msglog':'Log goes here'
+        'destination': str(curDest),
+        'nexttime': str(next_run_datetime),
+        'hoursbtwnruns': str(numInterval_Hours),
+        'msglog': f.read()
     }
     print(templateData)
     return render_template('index.html', **templateData)
@@ -66,32 +71,38 @@ def hello2():
 
 @app.route("/emergencystop",methods=['POST','GET'])
 def emergencystop():
+    global curPos, lastDir, curDir, curDest, next_run_datetime
     print("emergencystop")
     now = datetime.datetime.now()
     timeString = now.strftime("%Y-%m-%d %H:%M")
+    f = open(logname, "r")
+
     templateData = {
-        'direction': 'Unknown1',
+        'direction': str(curDir),
         'time': timeString,
-        'destination':'Unknown2',
-        'nexttime':'Unknown3',
-        'hoursbtwnruns':'Unknown4',
-        'msglog':'emergencystop'
+        'destination': str(curDest),
+        'nexttime': str(next_run_datetime),
+        'hoursbtwnruns': str(numInterval_Hours),
+        'msglog': f.read()
     }
     print(templateData)
     return render_template('index.html', **templateData)
 
 @app.route("/manualrun",methods=['POST','GET'])
 def manualrun():
+    global curPos, lastDir, curDir, curDest, next_run_datetime
     print("manualrun")
     now = datetime.datetime.now()
     timeString = now.strftime("%Y-%m-%d %H:%M")
+    f = open(logname, "r")
+
     templateData = {
-        'direction': 'Unknown1',
+        'direction': str(curDir),
         'time': timeString,
-        'destination':'Unknown2',
-        'nexttime':'Unknown3',
-        'hoursbtwnruns':'Unknown4',
-        'msglog':'manualrun'
+        'destination': str(curDest),
+        'nexttime': str(next_run_datetime),
+        'hoursbtwnruns': str(numInterval_Hours),
+        'msglog': f.read()
     }
     print(templateData)
     return render_template('index.html', **templateData)
@@ -104,10 +115,13 @@ print("---------------------------------")
 #time.sleep(2.00)
 print("Start Test")
 
+ipaddress=socket.gethostbyname(socket.gethostname())
+print(ipaddress)
 
 #start test code here
 if __name__ == "__main__":
-   app.run(host='192.168.1.131', port=5000, debug=True)
+    app.run(host=ipaddress, port=5000, debug=True)
+   #app.run(host='192.168.1.131', port=5000, debug=True)
 
 
 print("Exiting Test- Goodbye!")

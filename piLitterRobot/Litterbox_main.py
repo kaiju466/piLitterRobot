@@ -345,34 +345,39 @@ def logAndPrint(msgMethodType,msg):
 #flask methods and functions here
 @app.route("/")#use this to designate function that page will go to on root
 def index():
-    global curPos,lastDir,curDir,curDest
+    global curPos,lastDir,curDir,curDest,next_run_datetime
     now = datetime.datetime.now()
     timeString = now.strftime("%Y-%m-%d %H:%M")
+
+    f = open(logname, "r")
+
     templateData = {
-        'direction': 'Unknown1',
+        'direction': str(curDir),
         'time': timeString,
-        'destination':'Unknown2',
-        'nexttime':'Unknown3',
-        'hoursbtwnruns':'Unknown4',
-        'msglog':'Log goes here'
+        'destination':str(curDest),
+        'nexttime':str(next_run_datetime),
+        'hoursbtwnruns':str(numInterval_Hours),
+        'msglog':f.read()
     }
     print(templateData)
     return render_template('index.html', **templateData)
 
 @app.route("/emergencystop",methods=['POST','GET'])
 def emergencystop():
-    global curPos,lastDir,curDir,curDest
+    global curPos,lastDir,curDir,curDest,next_run_datetime
     print("emergencystop")
     motorStop()
     now = datetime.datetime.now()
     timeString = now.strftime("%Y-%m-%d %H:%M")
+    f = open(logname, "r")
+
     templateData = {
-        'direction': 'Unknown1',
+        'direction': str(curDir),
         'time': timeString,
-        'destination':'Unknown2',
-        'nexttime':'Unknown3',
-        'hoursbtwnruns':'Unknown4',
-        'msglog':'emergencystop'
+        'destination': str(curDest),
+        'nexttime': str(next_run_datetime),
+        'hoursbtwnruns': str(numInterval_Hours),
+        'msglog': f.read()
     }
     print(templateData)
     return render_template('index.html', **templateData)
@@ -384,13 +389,15 @@ def manualrun():
     next_run_datetime=current_datetime
     now = datetime.datetime.now()
     timeString = now.strftime("%Y-%m-%d %H:%M")
+    f = open(logname, "r")
+
     templateData = {
-        'direction': 'Unknown1',
+        'direction': str(curDir),
         'time': timeString,
-        'destination':'Unknown2',
-        'nexttime':'Unknown3',
-        'hoursbtwnruns':'Unknown4',
-        'msglog':'manualrun'
+        'destination': str(curDest),
+        'nexttime': str(next_run_datetime),
+        'hoursbtwnruns': str(numInterval_Hours),
+        'msglog': f.read()
     }
     print(templateData)
     return render_template('index.html', **templateData)

@@ -7,6 +7,14 @@
 <p>&nbsp;</p>
 <h1 style="color: #5e9ca0; text-align: center;">PiLitterRobot</h1>
 
+<script type="text/javascript">
+        $(document).ready(function () {
+            setTimeout(function () {
+                window.location.href='{{ url_for( 'index') }};
+            }, 3000);
+        });
+    </script>
+
 <p style="text-align: center;"><button type="button" onclick="window.location.href='{{ url_for( 'manualrun') }}';">Manual Cycle</button></p>
 <p style="text-align: center;"><button type="button" onclick="window.location.href='{{ url_for( 'emergencystop') }}';">Emergency Stop</button></p>
 
