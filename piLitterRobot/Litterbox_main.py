@@ -356,26 +356,26 @@ def logAndPrint(msgMethodType,msg):
 #flask methods and functions here
 @app.route("/")#use this to designate function that page will go to on root
 def index():
-    global curPos,lastDir,curDir,curDest,next_run_datetime
+    global curPos,lastDir,curDir,curDest,next_run_datetime,places,direction
     now = datetime.datetime.now()
     timeString = now.strftime("%Y-%m-%d %H:%M")
 
     f = open(logname, "r")
 
     templateData = {
-        'direction': str(curDir),
+        'direction': str(direction[curDir]),
         'time': timeString,
-        'destination':str(curDest),
-        'nexttime':str(next_run_datetime),
-        'hoursbtwnruns':str(numInterval_Hours),
-        'msglog':f.read()
+        'destination': str(places[curDest]),
+        'nexttime': str(next_run_datetime),
+        'hoursbtwnruns': str(numInterval_Hours),
+        'msglog': f.read()
     }
     print(templateData)
     return render_template('index.html', **templateData)
 
 @app.route("/emergencystop",methods=['POST','GET'])
 def emergencystop():
-    global curPos,lastDir,curDir,curDest,next_run_datetime
+    global curPos,lastDir,curDir,curDest,next_run_datetime,places,direction
     logAndPrint(logging.info,"emergencystop")
     motorStop()
     now = datetime.datetime.now()
@@ -383,9 +383,9 @@ def emergencystop():
     f = open(logname, "r")
 
     templateData = {
-        'direction': str(curDir),
+        'direction': str(direction[curDir]),
         'time': timeString,
-        'destination': str(curDest),
+        'destination': str(places[curDest]),
         'nexttime': str(next_run_datetime),
         'hoursbtwnruns': str(numInterval_Hours),
         'msglog': f.read()
@@ -395,7 +395,7 @@ def emergencystop():
 
 @app.route("/manualrun",methods=['POST','GET'])
 def manualrun():
-    global curPos,lastDir,next_run_datetime,current_datetime,curDest
+    global curPos,lastDir,next_run_datetime,current_datetime,curDest,places,direction
     logAndPrint(logging.info,"manualrun")
     next_run_datetime=current_datetime
     now = datetime.datetime.now()
@@ -403,9 +403,9 @@ def manualrun():
     f = open(logname, "r")
 
     templateData = {
-        'direction': str(curDir),
+        'direction': str(direction[curDir]),
         'time': timeString,
-        'destination': str(curDest),
+        'destination': str(places[curDest]),
         'nexttime': str(next_run_datetime),
         'hoursbtwnruns': str(numInterval_Hours),
         'msglog': f.read()
@@ -463,7 +463,7 @@ def main():
                 #logAndPrint(logging.info,str(cycle_count)+" "+str(cycle_num_max)+str(cycle_count>=cycle_num_max))
                 if cycle_count>=cycle_num_max:# and curDir==0 and curPos==0:
                     logAndPrint(logging.info,"Max Number of Cycles Reached:"+str(cycle_num_max))
-                    flag=false
+                    flag=False
                     time.sleep(60)
                 else:
                     logAndPrint(logging.info,"Cycle "+str(cycle_count)+" of "+str(cycle_num_max))

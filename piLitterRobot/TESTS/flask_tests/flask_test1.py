@@ -62,7 +62,7 @@ direction = {
 #methods and functions here
 @app.route("/")#use this to designate function that page will go to on root
 def index():
-    global curPos, lastDir, curDir, curDest, next_run_datetime
+    global curPos, lastDir, curDir, curDest, next_run_datetime,places,direction
     now = datetime.datetime.now()
     timeString = now.strftime("%Y-%m-%d %H:%M")
     f = open(logname, "r")
@@ -96,7 +96,7 @@ def hello2():
 
 @app.route("/emergencystop",methods=['POST','GET'])
 def emergencystop():
-    global curPos, lastDir, curDir, curDest, next_run_datetime
+    global curPos, lastDir, curDir, curDest, next_run_datetime,places,direction
     print("emergencystop")
     now = datetime.datetime.now()
     timeString = now.strftime("%Y-%m-%d %H:%M")
@@ -115,7 +115,7 @@ def emergencystop():
 
 @app.route("/manualrun",methods=['POST','GET'])
 def manualrun():
-    global curPos, lastDir, curDir, curDest, next_run_datetime
+    global curPos, lastDir, curDir, curDest, next_run_datetime,places,direction
     print("manualrun")
     now = datetime.datetime.now()
     timeString = now.strftime("%Y-%m-%d %H:%M")
