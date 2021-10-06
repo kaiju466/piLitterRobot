@@ -3,6 +3,7 @@ from flask import Flask, render_template
 
 import datetime
 import socket
+import os
 
 app = Flask(__name__)
 
@@ -38,21 +39,22 @@ next_song_run=datetime.datetime(2021, 7, 12, 9, 55, 0, 342380)
 
 curDir=0#-1=reverse,0=stopped,1=forward
 curPos=-1#Unknown=-1,Home=0,Dump=1
-curDest=1#Unknown=-1,Home=0,Dump=1
+curDest=-1#Unknown=-1,Home=0,Dump=1
 
 numInterval_Hours=6
 dump_time=20#in secs
 
+logname = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'litterbox_main.log')
 
 places = {
-        '0': 'home',
-        '1': 'dump',
-        '-1': 'Unknown'
+        0: 'home',
+        1: 'dump',
+        -1: 'Unknown'
 }
 direction = {
-        '0': 'stopped',
-        '1': 'forward',
-        '-1': 'reverse'
+        0: 'stopped',
+        1: 'forward',
+        -1: 'reverse'
 }
 
 
@@ -66,7 +68,8 @@ def index():
     now = datetime.datetime.now()
     timeString = now.strftime("%Y-%m-%d %H:%M")
     f = open(logname, "r")
-
+    print(str(direction[curDir]))
+    
     templateData = {
         'direction': str(direction[curDir]),
         'time': timeString,
@@ -97,7 +100,7 @@ def hello2():
 @app.route("/emergencystop",methods=['POST','GET'])
 def emergencystop():
     global curPos, lastDir, curDir, curDest, next_run_datetime,places,direction
-    print("emergencystop")
+    logAndPrint(logging.info,"Emergency Stop!!")
     now = datetime.datetime.now()
     timeString = now.strftime("%Y-%m-%d %H:%M")
     f = open(logname, "r")
@@ -116,11 +119,11 @@ def emergencystop():
 @app.route("/manualrun",methods=['POST','GET'])
 def manualrun():
     global curPos, lastDir, curDir, curDest, next_run_datetime,places,direction
-    print("manualrun")
+    logAndPrint(logging.info,"Manual Run")
     now = datetime.datetime.now()
     timeString = now.strftime("%Y-%m-%d %H:%M")
     f = open(logname, "r")
-
+    
     templateData = {
         'direction': str(direction[curDir]),
         'time': timeString,
@@ -132,6 +135,13 @@ def manualrun():
     print(templateData)
     return render_template('index.html', **templateData)
 
+def getipaddress():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(("8.8.8.8", 80))
+    ipaddress=s.getsockname()[0]
+    s.close()
+    return ipaddress
+
 # Title Screen
 print("---------------------------------")
 print("-" + prog_name + " " + str(prog_version) + "  -")
@@ -140,8 +150,7 @@ print("---------------------------------")
 #time.sleep(2.00)
 print("Start Test")
 
-ipaddress=socket.gethostbyname(socket.gethostname())
-print(ipaddress)
+ipaddress=getipaddress()
 
 #start test code here
 if __name__ == "__main__":

@@ -5,8 +5,12 @@
 </head>
 <p style="text-align: left;">&nbsp;</p>
 <p>&nbsp;</p>
+<script language="javascript">
+setInterval(function(){
+   window.location.href='/';
+}, 10000);
+</script>
 <h1 style="color: #5e9ca0; text-align: center;">PiLitterRobot</h1>
-
 <p style="text-align: center;"><button type="button" onclick="window.location.href='{{ url_for( 'manualrun') }}';">Manual Cycle</button></p>
 <p style="text-align: center;"><button type="button" onclick="window.location.href='{{ url_for( 'emergencystop') }}';">Emergency Stop</button></p>
 

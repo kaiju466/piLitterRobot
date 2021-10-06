@@ -16,6 +16,7 @@ import logging
 import os
 import configparser
 import smtplib, ssl
+import socket
 
 
 # Load the Log file
@@ -82,19 +83,19 @@ curDir=0#-1=reverse,0=stopped,1=forward
 curPos=-1#Unknown=-1,Home=0,Dump=1
 curDest=1#Unknown=-1,Home=0,Dump=1
 
-numInterval_Hours=6
-dump_time=20#in secs
-
 places = {
-        '0': 'home',
-        '1': 'dump',
-        '-1': 'Unknown'
+        0: 'home',
+        1: 'dump',
+        -1: 'Unknown'
 }
 direction = {
-        '0': 'stopped',
-        '1': 'forward',
-        '-1': 'reverse'
+        0: 'stopped',
+        1: 'forward',
+        -1: 'reverse'
 }
+
+numInterval_Hours=6
+dump_time=20#in secs
 
 #GPIO.setup(4, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 #cb = ButtonHandler(4, real_cb, edge='rising', bouncetime=100)
@@ -353,13 +354,12 @@ def logAndPrint(msgMethodType,msg):
     print(message)
     msgMethodType(message)
 
-#flask methods and functions here
+#methods and functions here
 @app.route("/")#use this to designate function that page will go to on root
 def index():
-    global curPos,lastDir,curDir,curDest,next_run_datetime,places,direction
+    global curPos, lastDir, curDir, curDest, next_run_datetime,places,direction
     now = datetime.datetime.now()
     timeString = now.strftime("%Y-%m-%d %H:%M")
-
     f = open(logname, "r")
 
     templateData = {
@@ -375,13 +375,13 @@ def index():
 
 @app.route("/emergencystop",methods=['POST','GET'])
 def emergencystop():
-    global curPos,lastDir,curDir,curDest,next_run_datetime,places,direction
-    logAndPrint(logging.info,"emergencystop")
-    motorStop()
+    global curPos, lastDir, curDir, curDest, next_run_datetime,places,direction
+    turnOffMotors()
+    print("emergencystop")
     now = datetime.datetime.now()
     timeString = now.strftime("%Y-%m-%d %H:%M")
     f = open(logname, "r")
-
+    
     templateData = {
         'direction': str(direction[curDir]),
         'time': timeString,
@@ -395,13 +395,15 @@ def emergencystop():
 
 @app.route("/manualrun",methods=['POST','GET'])
 def manualrun():
-    global curPos,lastDir,next_run_datetime,current_datetime,curDest,places,direction
-    logAndPrint(logging.info,"manualrun")
-    next_run_datetime=current_datetime
+    global curPos, lastDir, curDir, curDest, next_run_datetime,places,direction
+    print("manualrun")
     now = datetime.datetime.now()
     timeString = now.strftime("%Y-%m-%d %H:%M")
     f = open(logname, "r")
-
+    
+    #run manually by setting next_run_datetime to current time
+    next_run_datetime=current_datetime
+    
     templateData = {
         'direction': str(direction[curDir]),
         'time': timeString,
@@ -412,6 +414,13 @@ def manualrun():
     }
     print(templateData)
     return render_template('index.html', **templateData)
+
+def getipaddress():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(("8.8.8.8", 80))
+    ipaddress=s.getsockname()[0]
+    s.close()
+    return ipaddress
 
 #flask startup
 #print(__name__)
@@ -480,11 +489,13 @@ def main():
 #Start here
 #titleScreen()
 #main()
+ipaddress=getipaddress()
+    
 
 if __name__ == "__main__":
    p = Process(target=main, args=())
    p.start()  
-   app.run(host='192.168.1.134', port=5000, debug=True, use_reloader=False)
+   app.run(host=ipaddress, port=5000, debug=True, use_reloader=False)
    p.join()
    print("Post flask")
    #flask startup
