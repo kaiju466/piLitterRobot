@@ -1,9 +1,11 @@
 
 from flask import Flask, render_template
+from multiprocessing import Process, Value
 
 import datetime
 import socket
 import os
+
 
 app = Flask(__name__)
 
@@ -142,6 +144,10 @@ def getipaddress():
     s.close()
     return ipaddress
 
+def main():
+    while True:
+        print("test:"+str(datetime.datetime.now()))
+
 # Title Screen
 print("---------------------------------")
 print("-" + prog_name + " " + str(prog_version) + "  -")
@@ -152,11 +158,26 @@ print("Start Test")
 
 ipaddress=getipaddress()
 
+#while True:
+#    print("test")
+    
 #start test code here
-if __name__ == "__main__":
-    app.run(host=ipaddress, port=5000, debug=True)
+#if __name__ == "__main__":
+#    app.run(host=ipaddress, port=5000, debug=True)
    #app.run(host='192.168.1.131', port=5000, debug=True)
 
+if __name__ == "__main__":
+    Process(target=app.run, kwargs=dict(host=ipaddress, port=5000)).start()
+    Process(target=main).start()
+    print("Post flask")
+   #p = Process(target=main, args=())
+   #p.start()  
+   #app.run(host=ipaddress, port=5000, debug=True, use_reloader=False)
+   #p.join()
+   
+
+#Process(target=app.run, kwargs=dict(host='0.0.0.0', port=8080)).start()
+#Process(target=statupdate).start()
 
 print("Exiting Test- Goodbye!")
 
