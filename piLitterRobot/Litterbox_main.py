@@ -46,8 +46,8 @@ mode = GPIO.getmode()
 #GPIO.setmode(GPIO.BOARD)
 GPIO.setmode(GPIO.BCM)
 
-GPIO_PIR=27#23#sensor detection for Home
-GPIO_PIR2=22#sensor detection for Dump
+GPIO_Dump=27#23#sensor detection for Dump
+GPIO_Home=22#sensor detection for Home
 
 GPIO_Buzzer=26#buzzer pin
 b = TonalBuzzer(GPIO_Buzzer)
@@ -55,13 +55,13 @@ b = TonalBuzzer(GPIO_Buzzer)
 #GPIO_OverRide=#button used for manual run
 #GPIO_STATLIGHT=#led used to indicate finished status and issues# Blick=issue,On=Done,Off=Ok
 
-GPIO.setup(GPIO_PIR2, GPIO.IN)#setup Dump
+GPIO.setup(GPIO_Home, GPIO.IN)#setup Dump
 
 #counter=1
 #counter2=1
 
 cycle_count=1
-cycle_num_max=4
+cycle_num_max=int(config.get("MotorControl", "cycle_num_max"))#4
 
 
 flag=True
@@ -78,8 +78,8 @@ curDir=0#-1=reverse,0=stopped,1=forward
 curPos=-1#Unknown=-1,Home=0,Dump=1
 curDest=1#Unknown=-1,Home=0,Dump=1
 
-numInterval_Hours=6
-dump_time=20#in secs
+numInterval_Hours=int(config.get("MotorControl", "numInterval_Hours"))#6
+dump_time=int(config.get("MotorControl", "DumpWaitTime"))#20#in secs
 
 #GPIO.setup(4, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 #cb = ButtonHandler(4, real_cb, edge='rising', bouncetime=100)
@@ -92,8 +92,8 @@ dump_time=20#in secs
 mh = Raspi_MotorHAT(addr=0x6f)#default address: 0x6f
 
 #initialize motor
-myMotor = mh.getMotor(2)
-motorSpeed=50#250#150
+myMotor = mh.getMotor(2)#using second motor port
+motorSpeed=int(config.get("MotorControl", "Speed"))#50#250#150
 
 
 # recommended for auto-disabling motors on shutdown!
@@ -191,8 +191,8 @@ def move2FullDump():
     #logAndPrint("Info","Next run date/time:"+str(next_run_datetime))
     
 #HallEffect Sensor functions
-GPIO.setup(GPIO_PIR,GPIO.IN,pull_up_down=GPIO.PUD_UP)
-def printDumpDetected(GPIO_PIR):
+GPIO.setup(GPIO_Dump,GPIO.IN,pull_up_down=GPIO.PUD_UP)
+def printDumpDetected(GPIO_Dump):
     global curPos,lastDir
     #logAndPrint("Info",str(sflag))
     if curDest==1 and curDir==1 and curPos!=1:
@@ -215,9 +215,9 @@ def printDumpDetected(GPIO_PIR):
     #elif
         
     #mh.getMotor(2).run(Raspi_MotorHAT.RELEASE)
-GPIO.add_event_detect(GPIO_PIR,GPIO.RISING,callback=printDumpDetected)
+GPIO.add_event_detect(GPIO_Dump,GPIO.RISING,callback=printDumpDetected)
 
-def printHomeDetected(GPIO_PIR2):
+def printHomeDetected(GPIO_Home):
     global curPos,lastDir
     #logAndPrint("Info",str(sflag))
     if curDest==0 and curDir==-1 and curPos!=0:
@@ -237,7 +237,7 @@ def printHomeDetected(GPIO_PIR2):
         if curDest==1 and curDir==-1:
             logAndPrint("Info","Not Stopping at Home, heading to Dump")
         
-GPIO.add_event_detect(GPIO_PIR2,GPIO.RISING,callback=printHomeDetected)
+GPIO.add_event_detect(GPIO_Home,GPIO.RISING,callback=printHomeDetected)
 
 #Manual Interaction Functions
 #def manualOverride:
