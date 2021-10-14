@@ -1,5 +1,4 @@
-from flask import Flask, render_template#,jsonify
-#rom multiprocessing import Process, Value
+from flask import Flask, render_template  # ,jsonify
 
 import datetime
 import socket
@@ -67,7 +66,7 @@ def index():
 @app.route("/hello")
 def hello():
     now = datetime.datetime.now()
-    timeString = now.strftime("%Y-%m-%d %H:%M")
+    #timeString = now.strftime("%Y-%m-%d %H:%M")
     templateData = {
         'title': 'HELLO!',
         'time': timeString
@@ -75,13 +74,16 @@ def hello():
     print(templateData)
     return render_template('index.html', **templateData)
 
+
 @app.route("/emergencystop", methods=['POST', 'GET'])
 def emergencystop():
     global curPos, lastDir, curDir, curDest, next_run_datetime, places, direction
-    logAndPrint(logging.info, "Emergency Stop!!")
+    print("Emergency Stop!!")
     now = datetime.datetime.now()
-    timeString = now.strftime("%Y-%m-%d %H:%M")
+    #timeString = now.strftime("%Y-%m-%d %H:%M")
     f = open(logname, "r")
+
+    curDir=0
 
     templateData = {
         'direction': str(direction[curDir]),
@@ -98,10 +100,12 @@ def emergencystop():
 @app.route("/manualrun", methods=['POST', 'GET'])
 def manualrun():
     global curPos, lastDir, curDir, curDest, next_run_datetime, places, direction
-    logAndPrint(logging.info, "Manual Run")
+    print("Manual Run")
     now = datetime.datetime.now()
-    timeString = now.strftime("%Y-%m-%d %H:%M")
+    #timestring = now.strftime("%Y-%m-%d %H:%M")
     f = open(logname, "r")
+
+    next_run_datetime = now
 
     templateData = {
         'direction': str(direction[curDir]),
@@ -111,30 +115,28 @@ def manualrun():
         'hoursbtwnruns': str(numInterval_Hours),
         'msglog': f.read()
     }
-    print(templateData)
+    #print(templateData)
     return render_template('index.html', **templateData)
+
 
 @app.route("/status", methods=['GET'])
 def statusGet():
     templateData = {
-        'direction': str(direction[curDir]),
+        'direction': str(curDir),
         'time': timeString,
-        'destination': str(places[curDest]),
+        'destination': str(curDest),
         'nexttime': str(next_run_datetime),
         'hoursbtwnruns': str(numInterval_Hours)
     }
-    return templateData#jsonify(templateData)
+    return templateData  # jsonify(templateData)
 
 
 def getipaddress():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.connect(("8.8.8.8", 80))
-    ipaddress = s.getsockname()[0]
+    ip_address = s.getsockname()[0]
     s.close()
-    return ipaddress
-
-
-
+    return ip_address
 
 
 # Title Screen
@@ -154,12 +156,7 @@ ipaddress = getipaddress()
 if __name__ == "__main__":
     app.run(host=ipaddress, port=5000, debug=True)
 
-print("Post flask")
-
-
 # Process(target=app.run, kwargs=dict(host='0.0.0.0', port=8080)).start()
 # Process(target=statupdate).start()
 
 print("Exiting Test- Goodbye!")
-
-
