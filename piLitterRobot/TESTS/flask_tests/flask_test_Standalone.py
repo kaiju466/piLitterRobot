@@ -1,4 +1,4 @@
-from flask import Flask, render_template  # ,jsonify
+from flask import Flask, render_template,jsonify
 
 import datetime
 import socket
@@ -47,19 +47,18 @@ direction = {
 def index():
     global curPos, lastDir, curDir, curDest, next_run_datetime, places, direction
     now = datetime.datetime.now()
-    timeString = now.strftime("%Y-%m-%d %H:%M")
+    #timeString = now.strftime("%Y-%m-%d %H:%M")
     f = open(logname, "r")
-    print(str(direction[curDir]))
+    #print(str(direction[curDir]))
 
     templateData = {
         'direction': str(direction[curDir]),
-        'time': timeString,
         'destination': str(places[curDest]),
         'nexttime': str(next_run_datetime),
         'hoursbtwnruns': str(numInterval_Hours),
         'msglog': f.read()
     }
-    print(templateData)
+    #print(templateData)
     return render_template('index.html', **templateData)
 
 
@@ -68,8 +67,7 @@ def hello():
     now = datetime.datetime.now()
     #timeString = now.strftime("%Y-%m-%d %H:%M")
     templateData = {
-        'title': 'HELLO!',
-        'time': timeString
+        'title': 'HELLO!'
     }
     print(templateData)
     return render_template('index.html', **templateData)
@@ -87,7 +85,6 @@ def emergencystop():
 
     templateData = {
         'direction': str(direction[curDir]),
-        'time': timeString,
         'destination': str(places[curDest]),
         'nexttime': str(next_run_datetime),
         'hoursbtwnruns': str(numInterval_Hours),
@@ -109,7 +106,6 @@ def manualrun():
 
     templateData = {
         'direction': str(direction[curDir]),
-        'time': timeString,
         'destination': str(places[curDest]),
         'nexttime': str(next_run_datetime),
         'hoursbtwnruns': str(numInterval_Hours),
@@ -121,14 +117,15 @@ def manualrun():
 
 @app.route("/status", methods=['GET'])
 def statusGet():
+    print("statusGet")
     templateData = {
         'direction': str(curDir),
-        'time': timeString,
         'destination': str(curDest),
         'nexttime': str(next_run_datetime),
-        'hoursbtwnruns': str(numInterval_Hours)
+        'hoursbtwnruns': str(numInterval_Hours),
+        'eStop': False
     }
-    return templateData  # jsonify(templateData)
+    return jsonify(templateData)
 
 
 def getipaddress():

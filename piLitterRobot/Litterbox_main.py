@@ -6,8 +6,7 @@ from gpiozero.tones import Tone
 from flask import Flask, render_template
 from multiprocessing import Process, Value
 
-import datetime
-app = Flask(__name__)
+import requests
 import time
 import atexit
 import RPi.GPIO as GPIO
@@ -33,7 +32,7 @@ config.read(configname)
 
 
 
-prog_version=1.7
+prog_version=1.8
 
 
 port = config.get("Email", "port")#587  # For starttls
@@ -83,16 +82,7 @@ curDir=0#-1=reverse,0=stopped,1=forward
 curPos=-1#Unknown=-1,Home=0,Dump=1
 curDest=1#Unknown=-1,Home=0,Dump=1
 
-places = {
-        0: 'home',
-        1: 'dump',
-        -1: 'Unknown'
-}
-direction = {
-        0: 'stopped',
-        1: 'forward',
-        -1: 'reverse'
-}
+
 
 numInterval_Hours=6
 dump_time=20#in secs
@@ -436,19 +426,44 @@ def titleScreen():
     logAndPrint(logging.info,"-Date:"+current_datetime.today().strftime('%Y-%h-%d')+"               -")
     logAndPrint(logging.info,"---------------------------------")
     startupSong()
-    notify("Starting piLitterRobot","piLitterRobot has started it's run cycle. Will cycle "+str(cycle_num_max)+" times every "+str(numInterval_Hours)+" hours")
+    #notify("Starting piLitterRobot","piLitterRobot has started it's run cycle. Will cycle "+str(cycle_num_max)+" times every "+str(numInterval_Hours)+" hours")
     time.sleep(2.00)
 
 
 
-def main():
+def main(ipaddress):
     titleScreen()
     #main
     print("Running Main")
     global curPos,lastDir,flag,curDir,cycle_num_max,cycle_count,next_run_datetime,current_datetime
     while (flag):
+    
         #logAndPrint(logging.info,"Next run date/time:"+str(next_run_datetime))
         current_datetime=datetime.datetime.now()
+        
+        #webapi COM code
+        try:
+            response = requests.get("http://"+ipaddress + ":5000/status")  # api_url)
+            print(response.json())
+            data = response.json()  # json.load(response.json())#need to test this piece
+        except:
+            data = = {
+        'direction': '',
+        'destination': '',
+        'nexttime': '',
+        'hoursbtwnruns': '',
+        'eStop': False
+        }
+        
+        if data["eStop"]=True:
+            logAndPrint(logging.error,"Emergency Stop!!")
+            motorStop()
+            logAndPrint(logging.error,"Shutting Down")
+            quit()
+        
+        if next_run_datetime<data["nexttime"]:
+            next_run_datetime=data["nexttime"]
+        
         #logAndPrint(logging.info,"motor direction:"+str(curDir))
         if current_datetime>=next_run_datetime and cycle_count<=cycle_num_max and curDir==0:
             
@@ -487,20 +502,5 @@ def main():
     playSongOnRepeat(1,finishSong)
 
 #Start here
-#titleScreen()
-#main()
-ipaddress=getipaddress()
-    
-
-if __name__ == "__main__":
-   p = Process(target=main, args=())
-   p.start()  
-   app.run(host=ipaddress, port=5000, debug=True, use_reloader=False)
-   p.join()
-   print("Post flask")
-   #flask startup
-#print(__name__)
-#if __name__ == "__main__":
-#app.run(host='192.168.1.134', port=5000, debug=True)
-   #__name__="__main2__"
-#print("Post flask")
+ip_address=getipaddress()
+main(ip_address)
