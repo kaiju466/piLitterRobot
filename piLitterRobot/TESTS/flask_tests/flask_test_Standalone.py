@@ -1,8 +1,11 @@
-from flask import Flask, render_template,jsonify
+from flask import Flask, render_template,jsonify,request
+from datetime import datetime as dt
 
 import datetime
 import socket
 import os
+import json
+import requests
 
 app = Flask(__name__)
 
@@ -14,6 +17,9 @@ cycle_count = 1
 cycle_num_max = 4
 
 current_datetime = datetime.date.today()
+
+eStopFlag=False
+mainSChkinTime=datetime.datetime.now()
 
 next_run_datetime = datetime.datetime(2021, 7, 12, 9, 55, 0, 342380)
 next_song_run = datetime.datetime(2021, 7, 12, 9, 55, 0, 342380)
@@ -56,6 +62,7 @@ def index():
         'destination': str(places[curDest]),
         'nexttime': str(next_run_datetime),
         'hoursbtwnruns': str(numInterval_Hours),
+        #'box_online':if mainSChkinTime
         'msglog': f.read()
     }
     #print(templateData)
@@ -75,13 +82,14 @@ def hello():
 
 @app.route("/emergencystop", methods=['POST', 'GET'])
 def emergencystop():
-    global curPos, lastDir, curDir, curDest, next_run_datetime, places, direction
+    global curPos, lastDir, curDir, curDest, next_run_datetime, places, direction,eStopFlag
     print("Emergency Stop!!")
     now = datetime.datetime.now()
     #timeString = now.strftime("%Y-%m-%d %H:%M")
     f = open(logname, "r")
 
-    curDir=0
+    #curDir=0
+    eStopFlag=True
 
     templateData = {
         'direction': str(direction[curDir]),
@@ -123,10 +131,28 @@ def statusGet():
         'destination': str(curDest),
         'nexttime': str(next_run_datetime),
         'hoursbtwnruns': str(numInterval_Hours),
-        'eStop': False
+        'eStop': eStopFlag
     }
     return jsonify(templateData)
 
+@app.route("/status", methods=['PUT', 'POST'])
+def statusPut():
+    global curPos, lastDir, curDir, curDest, next_run_datetime, places, direction
+    content = request.json
+    #record = json.loads(requests.data)
+    print("statusPut")
+    #records = json.loads(data)
+    print(content["direction"])
+    curDir=int(content["direction"])
+    curDest=int(content["destination"])
+    tempDate=dt.strptime(content["nexttime"],'%Y-%m-%d %H:%M:%S.%f')
+    if next_run_datetime<tempDate:
+        print("nextruntime updated")
+        next_run_datetime=content["nexttime"]
+    else:
+        print("nextruntime updated")
+    
+    return jsonify(content)
 
 def getipaddress():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
