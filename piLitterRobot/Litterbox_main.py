@@ -447,7 +447,7 @@ def main(ipaddress):
             print(response.json())
             data = response.json()  # json.load(response.json())#need to test this piece
         except:
-            data = = {
+            data = {
         'direction': '',
         'destination': '',
         'nexttime': '',
@@ -502,5 +502,6 @@ def main(ipaddress):
     playSongOnRepeat(1,finishSong)
 
 #Start here
-ip_address=getipaddress()
-main(ip_address)
+if __name__ == "__main__":
+    ip_address=getipaddress()
+    main(ip_address)

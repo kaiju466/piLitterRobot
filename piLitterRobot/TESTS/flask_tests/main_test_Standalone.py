@@ -58,8 +58,8 @@ def apiPut(ip_address):
     response = requests.post("http://"+ip_address + ":5000/status", json=templateData)
     response.json()
 
-def main():
-    while True:
+def main(flag):
+    while flag:
         ipaddress = getipaddress()
         print("test:" + str(ipaddress) + " " + str(datetime.datetime.now()))
         apiGet(ipaddress)
@@ -68,15 +68,6 @@ def main():
         time.sleep(10)
         apiGet(ipaddress)
         
-def main2():
-    #while True:
-    ipaddress = getipaddress()
-    print("test:" + str(ipaddress) + " " + str(datetime.datetime.now()))
-    apiGet(ipaddress)
-    time.sleep(10)
-    apiPut(ipaddress)
-    time.sleep(10)
-    apiGet(ipaddress)
     
-
-main()
+if __name__ == "__main__":
+    main(true)
