@@ -344,66 +344,6 @@ def logAndPrint(msgMethodType,msg):
     print(message)
     msgMethodType(message)
 
-#methods and functions here
-@app.route("/")#use this to designate function that page will go to on root
-def index():
-    global curPos, lastDir, curDir, curDest, next_run_datetime,places,direction
-    now = datetime.datetime.now()
-    timeString = now.strftime("%Y-%m-%d %H:%M")
-    f = open(logname, "r")
-
-    templateData = {
-        'direction': str(direction[curDir]),
-        'time': timeString,
-        'destination': str(places[curDest]),
-        'nexttime': str(next_run_datetime),
-        'hoursbtwnruns': str(numInterval_Hours),
-        'msglog': f.read()
-    }
-    print(templateData)
-    return render_template('index.html', **templateData)
-
-@app.route("/emergencystop",methods=['POST','GET'])
-def emergencystop():
-    global curPos, lastDir, curDir, curDest, next_run_datetime,places,direction
-    turnOffMotors()
-    print("emergencystop")
-    now = datetime.datetime.now()
-    timeString = now.strftime("%Y-%m-%d %H:%M")
-    f = open(logname, "r")
-    
-    templateData = {
-        'direction': str(direction[curDir]),
-        'time': timeString,
-        'destination': str(places[curDest]),
-        'nexttime': str(next_run_datetime),
-        'hoursbtwnruns': str(numInterval_Hours),
-        'msglog': f.read()
-    }
-    print(templateData)
-    return render_template('index.html', **templateData)
-
-@app.route("/manualrun",methods=['POST','GET'])
-def manualrun():
-    global curPos, lastDir, curDir, curDest, next_run_datetime,places,direction
-    print("manualrun")
-    now = datetime.datetime.now()
-    timeString = now.strftime("%Y-%m-%d %H:%M")
-    f = open(logname, "r")
-    
-    #run manually by setting next_run_datetime to current time
-    next_run_datetime=current_datetime
-    
-    templateData = {
-        'direction': str(direction[curDir]),
-        'time': timeString,
-        'destination': str(places[curDest]),
-        'nexttime': str(next_run_datetime),
-        'hoursbtwnruns': str(numInterval_Hours),
-        'msglog': f.read()
-    }
-    print(templateData)
-    return render_template('index.html', **templateData)
 
 def getipaddress():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
