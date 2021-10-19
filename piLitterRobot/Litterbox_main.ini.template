@@ -1,0 +1,17 @@
+[MotorControl]
+Speed=50
+DumpWaitTime=20
+numInterval_Hours=6
+cycle_num_max=4
+
+[Email]
+SenderEmail=PUTYOURROBOTSEMAILHERE
+smtp_server=smtp.gmail.com
+port=587
+SndPwd=PUTYOURPASSWORDHERE
+ReceiverEmail=PUTYOUREMAILHERE
+
+[GPIOPinOut]
+GPIO_Home=22
+GPIO_Dump=27
+GPIO_Buzzer=26
