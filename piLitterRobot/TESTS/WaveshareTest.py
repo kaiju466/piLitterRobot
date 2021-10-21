@@ -50,6 +50,7 @@ class MotorDriver():
             pwm.setDutycycle(self.PWMB, 0)
 
 
+
 prog_version = 1.0
 prog_name = "Waveshare Test Program"
 
