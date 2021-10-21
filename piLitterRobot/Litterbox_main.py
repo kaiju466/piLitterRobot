@@ -5,6 +5,7 @@ from gpiozero import TonalBuzzer
 from gpiozero.tones import Tone
 from flask import Flask, render_template
 from multiprocessing import Process, Value
+from waveshare import MotorDriver
 
 import requests
 import time
@@ -95,10 +96,12 @@ dump_time=int(config.get("MotorControl", "DumpWaitTime"))#20#in secs
 #datetime.datetime(2020, 5, 17)
 
 # create a default object, no changes to I2C address or frequency
-mh = Raspi_MotorHAT(addr=0x6f)#default address: 0x6f
+#mh = Raspi_MotorHAT(addr=0x6f)#default address: 0x6f
+
 
 #initialize motor
-myMotor = mh.getMotor(2)#using second motor port
+Motor = MotorDriver()
+
 motorSpeed=int(config.get("MotorControl", "Speed"))#50#250#150
 
 
@@ -106,11 +109,8 @@ motorSpeed=int(config.get("MotorControl", "Speed"))#50#250#150
 def turnOffMotors():
     global curDir
     #logAndPrint(logging.info,"Stop Motors")
-    mh.getMotor(1).run(Raspi_MotorHAT.RELEASE)
-    mh.getMotor(2).run(Raspi_MotorHAT.RELEASE)
-    mh.getMotor(3).run(Raspi_MotorHAT.RELEASE)
-    mh.getMotor(4).run(Raspi_MotorHAT.RELEASE)
-    time.sleep(1.00)
+    Motor.MotorStop(0)
+
     curDir=0
     #logAndPrint(logging.info,"Done")
 atexit.register(turnOffMotors)
@@ -131,9 +131,10 @@ def motorForward():
     #print ("Forward! ")
     #myMotor.setSpeed(motorSpeed)
     #print ("\tSpeed up...")
-    myMotor.run(Raspi_MotorHAT.FORWARD)
+    Motor.MotorRun(0, 'forward', 0)
+
     for i in range(motorSpeed):
-        myMotor.setSpeed(i)
+        Motor.MotorRun(0, 'forward', i)
         time.sleep(0.01)
     curDir=1
     #logAndPrint(logging.info,str(curDir))
@@ -142,8 +143,7 @@ def motorReverse():
     turnOffMotors()
     global curDir
     #print ("Reverse! ")
-    myMotor.setSpeed(motorSpeed)
-    myMotor.run(Raspi_MotorHAT.BACKWARD)
+    Motor.MotorRun(0, 'backward', i)
     
     curDir=-1
 
@@ -151,11 +151,15 @@ def motorStop():
     global curDir
     #print ("Slow down...")
     for i in reversed(range(motorSpeed)):
-        myMotor.setSpeed(i)
+        if curDir == 1:
+            Motor.MotorRun(0, 'forward', i)
+        else:
+            Motor.MotorRun(0, 'backward', i)
+
     time.sleep(0.01)
 
     #print ("Stop")
-    myMotor.run(Raspi_MotorHAT.RELEASE)
+    Motor.MotorStop(0)
     curDir=0
     
 def move2Home():
@@ -268,7 +272,7 @@ def countDown(num):
 def scaleTiming(time,speed):
     ##speed range 1-255 (units=?)
     ##speed=0 is stopped
-    maxSpeed=255
+    maxSpeed=100
     minSpeed=1
     logAndPrint(logging.info,"Scale "+str(time)+" Seconds for "+str(speed)+" Speed")
     logAndPrint(logging.info,"Percentage Max speed is "+str((speed/maxSpeed)*100))
