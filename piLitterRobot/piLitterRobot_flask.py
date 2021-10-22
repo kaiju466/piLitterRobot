@@ -25,6 +25,8 @@ curDest = -1  # Unknown=-1,Home=0,Dump=1
 numInterval_Hours = 6
 dump_time = 20  # in secs
 
+estop=False
+
 logname = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'litterbox_main.log')
 
 places = {
@@ -78,6 +80,7 @@ def emergencystop():
     global curPos, lastDir, curDir, curDest, next_run_datetime, places, direction
     print("Emergency Stop!!")
     now = datetime.datetime.now()
+    estop=True
     #timeString = now.strftime("%Y-%m-%d %H:%M")
     f = open(logname, "r")
 
@@ -123,8 +126,9 @@ def statusGet():
         'destination': str(curDest),
         'nexttime': str(next_run_datetime),
         'hoursbtwnruns': str(numInterval_Hours),
-        'eStop': False
+        'eStop': estop
     }
+    estop=False
     return jsonify(templateData)
 
 

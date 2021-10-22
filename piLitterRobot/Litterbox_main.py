@@ -6,6 +6,7 @@ from gpiozero.tones import Tone
 from flask import Flask, render_template
 from multiprocessing import Process, Value
 from waveshare import MotorDriver
+from datetime import datetime as dt
 
 import requests
 import time
@@ -23,7 +24,7 @@ import socket
 logname = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'litterbox_main.log')
 #print(str(logname))
 os.remove(logname)
-logging.basicConfig(filename=logname, level=logging.DEBUG)#litterbox_main.log
+logging.basicConfig(filename=logname, level=logging.INFO)#litterbox_main.log
 
 # Load the configuration file
 configname= os.path.join(os.path.dirname(os.path.realpath(__file__)), 'Litterbox_main.ini')
@@ -388,7 +389,7 @@ def main(ipaddress):
         #webapi COM code
         try:
             response = requests.get("http://"+ipaddress + ":5000/status")  # api_url)
-            print(response.json())
+            #print(response.json())
             data = response.json()  # json.load(response.json())#need to test this piece
         except:
             data = {
@@ -405,9 +406,9 @@ def main(ipaddress):
             logAndPrint(logging.error,"Shutting Down")
             quit()
         
-
-        if next_run_datetime<data["nexttime"]:
-            next_run_datetime=data["nexttime"]
+        tempdatetime=dt.strptime(data["nexttime"],'%Y-%m-%d %H:%M:%S.%f')
+        if next_run_datetime<tempdatetime:
+            next_run_datetime=tempdatetime
         
         #logAndPrint(logging.info,"motor direction:"+str(curDir))
         if current_datetime>=next_run_datetime and cycle_count<=cycle_num_max and curDir==0:
