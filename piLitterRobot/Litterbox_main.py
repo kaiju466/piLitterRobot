@@ -131,11 +131,11 @@ def motorForward():
     #print ("Forward! ")
     #myMotor.setSpeed(motorSpeed)
     #print ("\tSpeed up...")
-    Motor.MotorRun(0, 'forward', 0)
+    Motor.MotorRun(0, 'forward', motorSpeed)
 
-    for i in range(motorSpeed):
-        Motor.MotorRun(0, 'forward', i)
-        time.sleep(0.01)
+    #for i in range(motorSpeed):
+        #Motor.MotorRun(0, 'forward', i)
+        #time.sleep(0.01)
     curDir=1
     #logAndPrint(logging.info,str(curDir))
 
@@ -143,20 +143,20 @@ def motorReverse():
     turnOffMotors()
     global curDir
     #print ("Reverse! ")
-    Motor.MotorRun(0, 'backward', i)
+    Motor.MotorRun(0, 'backward', motorSpeed)
     
     curDir=-1
 
 def motorStop():
     global curDir
     #print ("Slow down...")
-    for i in reversed(range(motorSpeed)):
-        if curDir == 1:
-            Motor.MotorRun(0, 'forward', i)
-        else:
-            Motor.MotorRun(0, 'backward', i)
-
-    time.sleep(0.01)
+    #for i in reversed(range(motorSpeed)):
+        #if curDir == 1:
+            #Motor.MotorRun(0, 'forward', i)
+        #else:
+            #Motor.MotorRun(0, 'backward', i)
+        #time.sleep(0.01)
+    
 
     #print ("Stop")
     Motor.MotorStop(0)
