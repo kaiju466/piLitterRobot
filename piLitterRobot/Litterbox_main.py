@@ -379,7 +379,7 @@ def main(ipaddress):
     titleScreen()
     #main
     print("Running Main")
-    global curPos,lastDir,flag,curDir,cycle_num_max,cycle_count,next_run_datetime,current_datetime
+    global curPos,lastDir,flag,curDest,curDir,cycle_num_max,cycle_count,next_run_datetime,current_datetime
     while (flag):
     
         #logAndPrint(logging.info,"Next run date/time:"+str(next_run_datetime))
@@ -392,8 +392,8 @@ def main(ipaddress):
             data = response.json()  # json.load(response.json())#need to test this piece
         except:
             data = {
-        'direction': '',
-        'destination': '',
+        'direction': -1,
+        'destination': -1,
         'nexttime': datetime.datetime(2021, 7, 12, 9, 55, 0, 342380),
         'hoursbtwnruns': '',
         'eStop': False
