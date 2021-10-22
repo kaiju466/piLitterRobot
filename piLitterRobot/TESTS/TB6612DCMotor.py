@@ -28,10 +28,10 @@ GPIO.setmode(GPIO.BOARD)
 
 
 # set up GPIO pins
-GPIO.setup(7, GPIO.OUT) # Connected to PWMA
-GPIO.setup(11, GPIO.OUT) # Connected to AIN2
-GPIO.setup(12, GPIO.OUT) # Connected to AIN1
-GPIO.setup(13, GPIO.OUT) # Connected to STBY
+GPIO.setup(7, GPIO.OUT) #(GPIO #4) Connected to PWMA
+GPIO.setup(11, GPIO.OUT) #(GPIO #17)Connected to AIN2
+GPIO.setup(12, GPIO.OUT) #(GPIO #18) Connected to AIN1
+GPIO.setup(13, GPIO.OUT) #(GPIO #21) Connected to STBY
 
 # Drive the motor clockwise
 GPIO.output(12, GPIO.HIGH) # Set AIN1
