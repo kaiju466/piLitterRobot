@@ -394,12 +394,12 @@ def main(ipaddress):
             data = {
         'direction': '',
         'destination': '',
-        'nexttime': '',
+        'nexttime': datetime.datetime(2021, 7, 12, 9, 55, 0, 342380),
         'hoursbtwnruns': '',
         'eStop': False
         }
         
-        if data["eStop"]=True:
+        if data["eStop"] == True:
             logAndPrint(logging.error,"Emergency Stop!!")
             motorStop()
             logAndPrint(logging.error,"Shutting Down")
