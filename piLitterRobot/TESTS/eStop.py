@@ -12,7 +12,7 @@ print("-" + prog_name + " " + str(prog_version) + "  -")
 #print("-Date:" + current_datetime.today().strftime('%Y-%h-%d') + "               -")
 print("---------------------------------")
 
-time.sleep(2.00)
+#time.sleep(2.00)
 
 print("Start Test")
 

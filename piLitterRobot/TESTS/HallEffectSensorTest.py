@@ -19,7 +19,7 @@ GPIO.setup(GPIO_Home,GPIO.IN,pull_up_down=GPIO.PUD_UP)
 
 def printFunction(GPIO_Pin):
     global counterDump,counterHome
-    
+    print(" ")
     if GPIO_Pin == 27:
         counterDump=counterDump+1
         print("Detected "+str(counterDump)+" "+gpios[GPIO_Pin])
