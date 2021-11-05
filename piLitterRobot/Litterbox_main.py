@@ -52,8 +52,8 @@ mode = GPIO.getmode()
 #GPIO.setmode(GPIO.BOARD)
 GPIO.setmode(GPIO.BCM)
 
-GPIO_Dump=27#23#sensor detection for Dump
-GPIO_Home=22#sensor detection for Home
+GPIO_Dump=23#23#sensor detection for Dump
+GPIO_Home=24#sensor detection for Home
 
 GPIO_Buzzer=26#buzzer pin
 b = TonalBuzzer(GPIO_Buzzer)
@@ -206,6 +206,7 @@ GPIO.setup(GPIO_Dump,GPIO.IN,pull_up_down=GPIO.PUD_UP)
 def printDumpDetected(GPIO_Dump):
     global curPos,lastDir
     #logAndPrint(logging.info,str(sflag))
+    logAndPrint(logging.info,"Dump logged")
     if curDest==1 and curDir==1 and curPos!=1:
         #global counter
         curPos=1
@@ -230,7 +231,8 @@ GPIO.add_event_detect(GPIO_Dump,GPIO.RISING,callback=printDumpDetected)
 
 def printHomeDetected(GPIO_Home):
     global curPos,lastDir
-    #logAndPrint(logging.info,str(sflag))
+    logAndPrint(logging.info,"Home logged")
+    
     if curDest==0 and curDir==-1 and curPos!=0:
         #global counter2
         lastDir=curDir
@@ -238,6 +240,8 @@ def printHomeDetected(GPIO_Home):
         #counter2=counter2+1
         #motorStop()
         #logAndPrint(logging.info,"Stop")
+        
+        #Final litter shift before settling
         time.sleep(scaleTiming(5.00,motorSpeed))#time.sleep(3.00)
         reverseCurMotorDir(lastDir)
         time.sleep(scaleTiming(4.00,motorSpeed))#time.sleep(2.00)
@@ -277,6 +281,7 @@ def scaleTiming(time,speed):
     minSpeed=1
     logAndPrint(logging.info,"Scale "+str(time)+" Seconds for "+str(speed)+" Speed")
     logAndPrint(logging.info,"Percentage Max speed is "+str((speed/maxSpeed)*100))
+    logAndPrint(logging.info,str(time)+" seconds is scaled to "+str(time*(maxSpeed/speed)))
     return (time*(maxSpeed/speed))#reverse scales percentage to get time delay based on speed
 
 #music functions
@@ -387,28 +392,28 @@ def main(ipaddress):
         current_datetime=datetime.datetime.now()
         
         #webapi COM code
-        try:
-            response = requests.get("http://"+ipaddress + ":5000/status")  # api_url)
+        #try:
+            #response = requests.get("http://"+ipaddress + ":5000/status")  # api_url)
             #print(response.json())
-            data = response.json()  # json.load(response.json())#need to test this piece
-        except:
-            data = {
-        'direction': -1,
-        'destination': -1,
-        'nexttime': datetime.datetime(2021, 7, 12, 9, 55, 0, 342380),
-        'hoursbtwnruns': '',
-        'eStop': False
-        }
+            #data = response.json()  # json.load(response.json())#need to test this piece
+        #except:
+            #data = {
+        #'direction': -1,
+        #'destination': -1,
+        #'nexttime': str(datetime.datetime(2021, 7, 12, 9, 55, 0, 342380)),
+        #'hoursbtwnruns': '',
+        #'eStop': False
+        #}
+        #print(str(data["eStop"]))
+        #if data["eStop"] == True:
+            #logAndPrint(logging.error,"Emergency Stop!!")
+            #motorStop()
+            #logAndPrint(logging.error,"Shutting Down")
+            #quit()
         
-        if data["eStop"] == True:
-            logAndPrint(logging.error,"Emergency Stop!!")
-            motorStop()
-            logAndPrint(logging.error,"Shutting Down")
-            quit()
-        
-        tempdatetime=dt.strptime(data["nexttime"],'%Y-%m-%d %H:%M:%S.%f')
-        if next_run_datetime<tempdatetime:
-            next_run_datetime=tempdatetime
+        #tempdatetime=dt.strptime(data["nexttime"],'%Y-%m-%d %H:%M:%S.%f')
+        #if next_run_datetime<tempdatetime:
+            #next_run_datetime=tempdatetime
         
         #logAndPrint(logging.info,"motor direction:"+str(curDir))
         if current_datetime>=next_run_datetime and cycle_count<=cycle_num_max and curDir==0:

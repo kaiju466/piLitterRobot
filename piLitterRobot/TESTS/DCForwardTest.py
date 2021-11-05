@@ -68,7 +68,7 @@ print("this is a motor driver test code")
 Motor = MotorDriver()
 
 print("forward")
-Motor.MotorRun(0, 'forward', 100)
-Motor.MotorRun(1, 'forward', 100)
+Motor.MotorRun(0, 'forward', 50)
+Motor.MotorRun(1, 'forward', 50)
 time.sleep(2)
 
