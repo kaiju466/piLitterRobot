@@ -35,7 +35,7 @@ config.read(configname)
 
 
 prog_version=1.8
-
+debug=False
 
 port = config.get("Email", "port")#587  # For starttls
 smtp_server = config.get("Email","smtp_server")#"smtp.gmail.com"
@@ -206,7 +206,9 @@ GPIO.setup(GPIO_Dump,GPIO.IN,pull_up_down=GPIO.PUD_UP)
 def printDumpDetected(GPIO_Dump):
     global curPos,lastDir
     #logAndPrint(logging.info,str(sflag))
-    logAndPrint(logging.info,"Dump logged")
+    if debug:
+        logAndPrint(logging.info,"Dump logged")
+    
     if curDest==1 and curDir==1 and curPos!=1:
         #global counter
         curPos=1
@@ -231,7 +233,8 @@ GPIO.add_event_detect(GPIO_Dump,GPIO.RISING,callback=printDumpDetected)
 
 def printHomeDetected(GPIO_Home):
     global curPos,lastDir
-    logAndPrint(logging.info,"Home logged")
+    if debug:
+        logAndPrint(logging.info,"Home logged")
     
     if curDest==0 and curDir==-1 and curPos!=0:
         #global counter2
@@ -452,7 +455,7 @@ def main(ipaddress):
     logAndPrint(logging.info,"Exiting- Goodbye!")
     notify("Starting piLitterRobot","piLitterRobot has used up its "+str(cycle_num_max)+" run cycle(s).")   
 
-    playSongOnRepeat(1,finishSong)
+    playSongOnRepeat(60,finishSong)
 
 #Start here
 if __name__ == "__main__":
