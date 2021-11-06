@@ -24,8 +24,8 @@ time.sleep(2.00)
 
 print("Start Forward Test")
 
-print("this is a motor driver test code")
-Motor = Motor('waveshare')
+print("this is a universal motor driver test code")
+Motor = Motor("waveshare")
 
 print("forward")
 Motor.MotorRun(0, 'forward', 50)

@@ -6,6 +6,7 @@ class Motor():
     mdn=""
     
     def __init__(self,motorDrivername):
+        global mdn
         mdn=motorDrivername
         if motorDrivername == "waveshare":
             Motor = MotorDriver()
@@ -13,17 +14,19 @@ class Motor():
             Motor=Raspi_motorHAT(addr=0x6f)
         
     
-    def MotorRun(self, motor, index, speed,motorDrivername):
-        if motorDrivername == "waveshare":
-            Motor.MotorRun(motor, index, speed)
+    def MotorRun(self, motor, index, speed):
+        global mdn
+        if mdn == "waveshare":
+            Motor.MotorRun(self,motor, index, speed)
         else:
             if index == "forward":
                 Motor.run(Raspi_MotorHAT.FORWARD)
             else:
                 Motor.run(Raspi_MotorHAT.Backward)
     
-    def MotorStop(self, motor,motorDrivername):
-        if motorDrivername == "waveshare":
+    def MotorStop(self, motor):
+        global mdn
+        if mdn == "waveshare":
             Motor.MotorStop(motor)
         else:
             Motor.getMotor(motor).run(Raspi_MotorHAT.RELEASE)
