@@ -2,8 +2,11 @@
 from Raspi_MotorHAT import Raspi_MotorHAT, Raspi_DCMotor
 from waveshare import MotorDriver
 
-class Motor(motorDrivername):
+class Motor():
+    mdn=""
+    
     def __init__(self,motorDrivername):
+        mdn=motorDrivername
         if motorDrivername == "waveshare":
             Motor = MotorDriver()
         else:
