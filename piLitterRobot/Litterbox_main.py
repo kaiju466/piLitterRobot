@@ -5,6 +5,8 @@ from gpiozero import TonalBuzzer
 from gpiozero.tones import Tone
 from flask import Flask, render_template
 from multiprocessing import Process, Value
+from waveshare import MotorDriver
+from datetime import datetime as dt
 
 import requests
 import time
@@ -22,7 +24,7 @@ import socket
 logname = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'litterbox_main.log')
 #print(str(logname))
 os.remove(logname)
-logging.basicConfig(filename=logname, level=logging.DEBUG)#litterbox_main.log
+logging.basicConfig(filename=logname, level=logging.INFO)#litterbox_main.log
 
 # Load the configuration file
 configname= os.path.join(os.path.dirname(os.path.realpath(__file__)), 'Litterbox_main.ini')
@@ -33,7 +35,7 @@ config.read(configname)
 
 
 prog_version=1.8
-
+debug=False
 
 port = config.get("Email", "port")#587  # For starttls
 smtp_server = config.get("Email","smtp_server")#"smtp.gmail.com"
@@ -50,8 +52,8 @@ mode = GPIO.getmode()
 #GPIO.setmode(GPIO.BOARD)
 GPIO.setmode(GPIO.BCM)
 
-GPIO_Dump=27#23#sensor detection for Dump
-GPIO_Home=22#sensor detection for Home
+GPIO_Dump=23#23#sensor detection for Dump
+GPIO_Home=24#sensor detection for Home
 
 GPIO_Buzzer=26#buzzer pin
 b = TonalBuzzer(GPIO_Buzzer)
@@ -95,10 +97,12 @@ dump_time=int(config.get("MotorControl", "DumpWaitTime"))#20#in secs
 #datetime.datetime(2020, 5, 17)
 
 # create a default object, no changes to I2C address or frequency
-mh = Raspi_MotorHAT(addr=0x6f)#default address: 0x6f
+#mh = Raspi_MotorHAT(addr=0x6f)#default address: 0x6f
+
 
 #initialize motor
-myMotor = mh.getMotor(2)#using second motor port
+Motor = MotorDriver()
+
 motorSpeed=int(config.get("MotorControl", "Speed"))#50#250#150
 
 
@@ -106,11 +110,8 @@ motorSpeed=int(config.get("MotorControl", "Speed"))#50#250#150
 def turnOffMotors():
     global curDir
     #logAndPrint(logging.info,"Stop Motors")
-    mh.getMotor(1).run(Raspi_MotorHAT.RELEASE)
-    mh.getMotor(2).run(Raspi_MotorHAT.RELEASE)
-    mh.getMotor(3).run(Raspi_MotorHAT.RELEASE)
-    mh.getMotor(4).run(Raspi_MotorHAT.RELEASE)
-    time.sleep(1.00)
+    Motor.MotorStop(0)
+
     curDir=0
     #logAndPrint(logging.info,"Done")
 atexit.register(turnOffMotors)
@@ -131,10 +132,11 @@ def motorForward():
     #print ("Forward! ")
     #myMotor.setSpeed(motorSpeed)
     #print ("\tSpeed up...")
-    myMotor.run(Raspi_MotorHAT.FORWARD)
-    for i in range(motorSpeed):
-        myMotor.setSpeed(i)
-        time.sleep(0.01)
+    Motor.MotorRun(0, 'forward', motorSpeed)
+
+    #for i in range(motorSpeed):
+        #Motor.MotorRun(0, 'forward', i)
+        #time.sleep(0.01)
     curDir=1
     #logAndPrint(logging.info,str(curDir))
 
@@ -142,20 +144,23 @@ def motorReverse():
     turnOffMotors()
     global curDir
     #print ("Reverse! ")
-    myMotor.setSpeed(motorSpeed)
-    myMotor.run(Raspi_MotorHAT.BACKWARD)
+    Motor.MotorRun(0, 'backward', motorSpeed)
     
     curDir=-1
 
 def motorStop():
     global curDir
     #print ("Slow down...")
-    for i in reversed(range(motorSpeed)):
-        myMotor.setSpeed(i)
-    time.sleep(0.01)
+    #for i in reversed(range(motorSpeed)):
+        #if curDir == 1:
+            #Motor.MotorRun(0, 'forward', i)
+        #else:
+            #Motor.MotorRun(0, 'backward', i)
+        #time.sleep(0.01)
+    
 
     #print ("Stop")
-    myMotor.run(Raspi_MotorHAT.RELEASE)
+    Motor.MotorStop(0)
     curDir=0
     
 def move2Home():
@@ -201,6 +206,9 @@ GPIO.setup(GPIO_Dump,GPIO.IN,pull_up_down=GPIO.PUD_UP)
 def printDumpDetected(GPIO_Dump):
     global curPos,lastDir
     #logAndPrint(logging.info,str(sflag))
+    if debug:
+        logAndPrint(logging.info,"Dump logged")
+    
     if curDest==1 and curDir==1 and curPos!=1:
         #global counter
         curPos=1
@@ -225,7 +233,9 @@ GPIO.add_event_detect(GPIO_Dump,GPIO.RISING,callback=printDumpDetected)
 
 def printHomeDetected(GPIO_Home):
     global curPos,lastDir
-    #logAndPrint(logging.info,str(sflag))
+    if debug:
+        logAndPrint(logging.info,"Home logged")
+    
     if curDest==0 and curDir==-1 and curPos!=0:
         #global counter2
         lastDir=curDir
@@ -233,6 +243,8 @@ def printHomeDetected(GPIO_Home):
         #counter2=counter2+1
         #motorStop()
         #logAndPrint(logging.info,"Stop")
+        
+        #Final litter shift before settling
         time.sleep(scaleTiming(5.00,motorSpeed))#time.sleep(3.00)
         reverseCurMotorDir(lastDir)
         time.sleep(scaleTiming(4.00,motorSpeed))#time.sleep(2.00)
@@ -268,10 +280,11 @@ def countDown(num):
 def scaleTiming(time,speed):
     ##speed range 1-255 (units=?)
     ##speed=0 is stopped
-    maxSpeed=255
+    maxSpeed=100
     minSpeed=1
     logAndPrint(logging.info,"Scale "+str(time)+" Seconds for "+str(speed)+" Speed")
     logAndPrint(logging.info,"Percentage Max speed is "+str((speed/maxSpeed)*100))
+    logAndPrint(logging.info,str(time)+" seconds is scaled to "+str(time*(maxSpeed/speed)))
     return (time*(maxSpeed/speed))#reverse scales percentage to get time delay based on speed
 
 #music functions
@@ -375,35 +388,35 @@ def main(ipaddress):
     titleScreen()
     #main
     print("Running Main")
-    global curPos,lastDir,flag,curDir,cycle_num_max,cycle_count,next_run_datetime,current_datetime
+    global curPos,lastDir,flag,curDest,curDir,cycle_num_max,cycle_count,next_run_datetime,current_datetime
     while (flag):
     
         #logAndPrint(logging.info,"Next run date/time:"+str(next_run_datetime))
         current_datetime=datetime.datetime.now()
         
         #webapi COM code
-        try:
-            response = requests.get("http://"+ipaddress + ":5000/status")  # api_url)
-            print(response.json())
-            data = response.json()  # json.load(response.json())#need to test this piece
-        except:
-            data = {
-        'direction': '',
-        'destination': '',
-        'nexttime': '',
-        'hoursbtwnruns': '',
-        'eStop': False
-        }
+        #try:
+            #response = requests.get("http://"+ipaddress + ":5000/status")  # api_url)
+            #print(response.json())
+            #data = response.json()  # json.load(response.json())#need to test this piece
+        #except:
+            #data = {
+        #'direction': -1,
+        #'destination': -1,
+        #'nexttime': str(datetime.datetime(2021, 7, 12, 9, 55, 0, 342380)),
+        #'hoursbtwnruns': '',
+        #'eStop': False
+        #}
+        #print(str(data["eStop"]))
+        #if data["eStop"] == True:
+            #logAndPrint(logging.error,"Emergency Stop!!")
+            #motorStop()
+            #logAndPrint(logging.error,"Shutting Down")
+            #quit()
         
-        if data["eStop"]=True:
-            logAndPrint(logging.error,"Emergency Stop!!")
-            motorStop()
-            logAndPrint(logging.error,"Shutting Down")
-            quit()
-        
-
-        if next_run_datetime<data["nexttime"]:
-            next_run_datetime=data["nexttime"]
+        #tempdatetime=dt.strptime(data["nexttime"],'%Y-%m-%d %H:%M:%S.%f')
+        #if next_run_datetime<tempdatetime:
+            #next_run_datetime=tempdatetime
         
         #logAndPrint(logging.info,"motor direction:"+str(curDir))
         if current_datetime>=next_run_datetime and cycle_count<=cycle_num_max and curDir==0:
@@ -442,9 +455,10 @@ def main(ipaddress):
     logAndPrint(logging.info,"Exiting- Goodbye!")
     notify("Starting piLitterRobot","piLitterRobot has used up its "+str(cycle_num_max)+" run cycle(s).")   
 
-    playSongOnRepeat(1,finishSong)
+    playSongOnRepeat(60,finishSong)
 
 #Start here
 if __name__ == "__main__":
     ip_address=getipaddress()
     main(ip_address)
+
