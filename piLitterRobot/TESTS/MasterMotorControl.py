@@ -1,4 +1,5 @@
 #!/usr/bin/python
+#this is an experimental motor driver to attempt to create an interface for the three potential drivers to reduce complexity in design
 from Raspi_MotorHAT import Raspi_MotorHAT, Raspi_DCMotor
 from waveshare import MotorDriver
 
