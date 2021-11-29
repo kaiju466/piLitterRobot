@@ -22,22 +22,12 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 
 
-
-def logAndPrint(msgType,msg):
-    
-    current_datetime=datetime.datetime.now()#.today().strftime('%Y-%h-%d')
+#console prints messages and logs them to the log file
+def logAndPrint(msgMethodType,msg):
+    #current_datetime=datetime.datetime.now()#.today().strftime('%Y-%h-%d')
     message=str(current_datetime)+"|"+msg
     print(message)
-    if msgType=="Debug":
-        logging.debug(message)
-    elif msgType=="Info":
-        logging.info(message)
-    elif msgType=="Warning":
-        logging.warning(message)
-    elif msgType=='Error':
-        logging.error(message)
-    else:
-        logging.error(message)
+    msgMethodType(message)
         
 
 
@@ -49,10 +39,10 @@ print("---------------------------------")
 
 time.sleep(2.00)
 
-logAndPrint("Debug","Debug test")
-logAndPrint("Info","Info test")
-logAndPrint("Warning","Warning test")
-logAndPrint("Error","Error test")
+logAndPrint(logging.debug,"Debug test")
+logAndPrint(logging.info,"Info test")
+logAndPrint(logging.warning,"Warning test")
+logAndPrint(logging.error,"Error test")
 
 
 
