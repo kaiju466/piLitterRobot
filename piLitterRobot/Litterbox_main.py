@@ -52,10 +52,10 @@ mode = GPIO.getmode()
 #GPIO.setmode(GPIO.BOARD)
 GPIO.setmode(GPIO.BCM)
 
-GPIO_Dump=23#23#sensor detection for Dump
-GPIO_Home=24#sensor detection for Home
+GPIO_Dump=int(config.get("GPIOPinOut","GPIO_Dump"))#23#23#sensor detection for Dump
+GPIO_Home=int(config.get("GPIOPinOut","GPIO_Home"))#24#sensor detection for Home
 
-GPIO_Buzzer=26#buzzer pin
+GPIO_Buzzer=int(config.get("GPIOPinOut","GPIO_Buzzer"))#26#buzzer pin
 b = TonalBuzzer(GPIO_Buzzer)
 
 #GPIO_OverRide=#button used for manual run

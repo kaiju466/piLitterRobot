@@ -1,4 +1,5 @@
 from flask import Flask, render_template,jsonify
+from waveshare import MotorDriver
 
 import datetime
 import socket
@@ -12,6 +13,9 @@ prog_name = "piLitterRobot Flask Program"
 # mode = GPIO.getmode()
 cycle_count = 1
 cycle_num_max = 4
+
+#initialize motor
+Motor = MotorDriver()
 
 current_datetime = datetime.date.today()
 
@@ -80,7 +84,9 @@ def emergencystop():
     now = datetime.datetime.now()
     #timeString = now.strftime("%Y-%m-%d %H:%M")
     f = open(logname, "r")
-
+    
+    Motor.MotorStop(0)
+    
     curDir=0
 
     templateData = {
