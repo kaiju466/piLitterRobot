@@ -104,7 +104,7 @@ dump_time=int(config.get("MotorControl", "DumpWaitTime"))#20#in secs
 Motor = MotorDriver()
 
 motorSpeed=int(config.get("MotorControl", "Speed"))#50#250#150
-
+rMotorSpeed=int(config.get("MotorControl", "RevSpeed"))
 
 # recommended for auto-disabling motors on shutdown!
 def turnOffMotors():
@@ -144,7 +144,7 @@ def motorReverse():
     turnOffMotors()
     global curDir
     #print ("Reverse! ")
-    Motor.MotorRun(0, 'backward', motorSpeed)
+    Motor.MotorRun(0, 'backward', rMotorSpeed)
     
     curDir=-1
 
