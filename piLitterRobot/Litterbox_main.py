@@ -80,6 +80,8 @@ next_run_datetime=datetime.datetime(2021, 7, 12, 9, 55, 0, 342380)
 next_song_run=datetime.datetime(2021, 7, 12, 9, 55, 0, 342380)
 #next_run_time=datetime.time(hour = 20, minute = 45, second = 0)
 
+
+
 curDir=0#-1=reverse,0=stopped,1=forward
 curPos=-1#Unknown=-1,Home=0,Dump=1
 curDest=1#Unknown=-1,Home=0,Dump=1
@@ -245,9 +247,9 @@ def printHomeDetected(GPIO_Home):
         #logAndPrint(logging.info,"Stop")
         
         #Final litter shift before settling
-        time.sleep(scaleTiming(5.00,motorSpeed))#time.sleep(3.00)
+        time.sleep(scaleTiming(5.00,rMotorSpeed))#time.sleep(3.00)
         reverseCurMotorDir(lastDir)
-        time.sleep(scaleTiming(4.00,motorSpeed))#time.sleep(2.00)
+        time.sleep(scaleTiming(4.00,MotorSpeed))#time.sleep(2.00)
         motorStop()
         curPos=0
         logAndPrint(logging.info,"Reached Home")
@@ -365,6 +367,11 @@ def getipaddress():
     s.close()
     return ipaddress
 
+def updateRunTime(datetime):
+    global config
+    print("Storing Next_Run_Time:"+str(datetime))
+    config.set('Schedule','Next_Run_Time',str(datetime))
+    print("Next_Run_Time Stored")
 #flask startup
 #print(__name__)
 #if __name__ == "__main__":
@@ -389,6 +396,7 @@ def main(ipaddress):
     #main
     print("Running Main")
     global curPos,lastDir,flag,curDest,curDir,cycle_num_max,cycle_count,next_run_datetime,current_datetime
+    updateRunTime(next_run_datetime)
     while (flag):
     
         #logAndPrint(logging.info,"Next run date/time:"+str(next_run_datetime))
@@ -427,6 +435,9 @@ def main(ipaddress):
             logAndPrint(logging.info,"Current run date/time:"+str(current_datetime))
             #logAndPrint(logging.info,"motor direction:"+str(curDir))
             next_run_datetime=(datetime.datetime.now() + datetime.timedelta(hours=numInterval_Hours))#minutes=numInterval_Hours))#
+            
+            updateRunTime(next_run_datetime)
+            
             if (cycle_count+1)<=cycle_num_max:
                 logAndPrint(logging.info,"Next run date/time:"+str(next_run_datetime))
             

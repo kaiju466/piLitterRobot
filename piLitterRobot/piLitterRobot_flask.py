@@ -14,6 +14,13 @@ prog_name = "piLitterRobot Flask Program"
 cycle_count = 1
 cycle_num_max = 4
 
+#initialize config reader
+configname= os.path.join(os.path.dirname(os.path.realpath(__file__)), 'Litterbox_main.ini')
+config = configparser.ConfigParser()
+config.sections()
+config.read(configname)
+
+
 #initialize motor
 Motor = MotorDriver()
 
