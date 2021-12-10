@@ -245,14 +245,15 @@ def printHomeDetected(GPIO_Home):
         #counter2=counter2+1
         #motorStop()
         #logAndPrint(logging.info,"Stop")
-        
+        logAndPrint(logging.info,"Reached Home Settling")
         #Final litter shift before settling
         time.sleep(scaleTiming(5.00,rMotorSpeed))#time.sleep(3.00)
         reverseCurMotorDir(lastDir)
-        time.sleep(scaleTiming(4.00,MotorSpeed))#time.sleep(2.00)
+        #time.sleep(scaleTiming(4.00,MotorSpeed))#time.sleep(2.00)
+    elif curDest==0 and curDir==1 and curPos!=0:
         motorStop()
         curPos=0
-        logAndPrint(logging.info,"Reached Home")
+        logAndPrint(logging.info,"Reached Home, Stopping")
     else:
         if curDest==1 and curDir==-1:
             logAndPrint(logging.info,"Not Stopping at Home, heading to Dump")
