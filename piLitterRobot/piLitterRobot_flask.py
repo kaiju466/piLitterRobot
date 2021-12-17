@@ -1,6 +1,7 @@
 from flask import Flask, render_template,jsonify
 from waveshare import MotorDriver
 
+import configparser
 import datetime
 import socket
 import os
@@ -140,6 +141,13 @@ def statusGet():
     }
     return jsonify(templateData)
 
+@app.route("/status", methods=['POST'])
+def statusPost():
+    global next_run_datetime
+    print("statusPost")
+    next_run_datetime = dt.strptime(request.form.get('nexttime'),'%Y-%m-%d %H:%M:%S.%f')
+    templateData = {'nexttime': str(next_run_datetime)}
+    return jsonify(templateData)
 
 def getipaddress():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

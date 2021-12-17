@@ -9,6 +9,7 @@
 setInterval(function(){
    window.location.href='/';
 }, 10000);
+
 </script>
 <h1 style="color: #5e9ca0; text-align: center;">PiLitterRobot</h1>
 <p style="text-align: center;"><button type="button" onclick="window.location.href='{{ url_for( 'manualrun') }}';">Manual Cycle</button></p>
@@ -36,5 +37,9 @@ setInterval(function(){
 </tbody>
 </table>
 <p style="text-align: center;"><textarea id="w3review" style="width: 80%; height: 126px;" cols="50" name="w3review" rows="4">{{ msglog }}</textarea></p>
+<script language="javascript">
+var textarea = document.getElementById('textarea_id');
+textarea.scrollTop = textarea.scrollHeight;
+</script>
 <p><strong>&nbsp;</strong></p>
 <p><strong>&nbsp;</strong></p>

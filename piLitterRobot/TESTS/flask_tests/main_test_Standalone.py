@@ -55,8 +55,13 @@ def apiPut(ip_address):
         'eStop': False
     }
     
-    response = requests.post("http://"+ip_address + ":5000/status", json=templateData)
-    response.json()
+    templateDataSent = {
+            'nexttime': str(date_time)
+            }
+    
+    response = requests.post("http://"+ip_address + ":5000/status", json=templateDataSent)
+    data=response.json()
+    print(str(data))
 
 def main(flag):
     while flag:
@@ -64,7 +69,7 @@ def main(flag):
         print("test:" + str(ipaddress) + " " + str(datetime.datetime.now()))
         apiGet(ipaddress)
         time.sleep(10)
-        apiPut(ipaddress)
+        apiPost(ipaddress)
         time.sleep(10)
         apiGet(ipaddress)
         
