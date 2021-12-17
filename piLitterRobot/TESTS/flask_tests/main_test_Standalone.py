@@ -46,7 +46,8 @@ def apiGet(ip_address):
         print("Emergency Stop!!")
         quit()
 
-def apiPut(ip_address):
+def apiPost(ip_address):
+    global next_run_datetime
     templateData = {
         'direction': curDir,
         'destination': curDest,
@@ -54,9 +55,9 @@ def apiPut(ip_address):
         'hoursbtwnruns': numInterval_Hours,
         'eStop': False
     }
-    
+    print(str(next_run_datetime))
     templateDataSent = {
-            'nexttime': str(date_time)
+            'nexttime': str(next_run_datetime)
             }
     
     response = requests.post("http://"+ip_address + ":5000/status", json=templateDataSent)
@@ -75,4 +76,4 @@ def main(flag):
         
     
 if __name__ == "__main__":
-    main(true)
+    main(True)

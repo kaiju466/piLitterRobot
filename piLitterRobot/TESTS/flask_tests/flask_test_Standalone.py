@@ -157,8 +157,12 @@ def statusPut():
 @app.route("/status", methods=['POST'])
 def statusPost():
     global next_run_datetime
+    content = request.json
+    #record = json.loads(requests.data)
     print("statusPost")
-    next_run_datetime = dt.strptime(request.form.get('nexttime'),'%Y-%m-%d %H:%M:%S.%f')
+    #records = json.loads(data)
+    print(content["nexttime"])
+    next_run_datetime = dt.strptime(str(content["nexttime"]),'%Y-%m-%d %H:%M:%S.%f')
     templateData = {'nexttime': str(next_run_datetime)}
     return jsonify(templateData)
 
