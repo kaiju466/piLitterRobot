@@ -145,6 +145,7 @@ def statusGet():
 def statusPost():
     global next_run_datetime
     content = request.json
+    print("statusPost")
     print(content["nexttime"])
     next_run_datetime = dt.strptime(str(content["nexttime"]),'%Y-%m-%d %H:%M:%S.%f')
     templateData = {'nexttime': str(next_run_datetime)}

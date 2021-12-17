@@ -451,7 +451,7 @@ def main(ipaddress):
         #logAndPrint(logging.info,"Next run date/time:"+str(next_run_datetime))
         current_datetime=datetime.datetime.now()
         
-        #flaskCom()
+        flaskCom()
         
         #logAndPrint(logging.info,"motor direction:"+str(curDir))
         if current_datetime>=next_run_datetime and cycle_count<=cycle_num_max and curDir==0:
@@ -459,10 +459,9 @@ def main(ipaddress):
             if cycle_count>1:
                 logAndPrint(logging.info,"Time to clean the litter!")#logAndPrint(logging.info,"Time to clean the litter!")
                 
-            logAndPrint(logging.info,"Current run date/time:"+str(current_datetime))
+            logAndPrint(logging.iwithnfo,"Current run date/time:"+str(current_datetime))
             #logAndPrint(logging.info,"motor direction:"+str(curDir))
             next_run_datetime=(datetime.datetime.now() + datetime.timedelta(hours=numInterval_Hours))#minutes=numInterval_Hours))#
-            
             updateRunTime(next_run_datetime)
             
             if (cycle_count+1)<=cycle_num_max:
