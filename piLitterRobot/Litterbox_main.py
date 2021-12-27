@@ -448,9 +448,15 @@ def main(ipaddress):
     #main
     print("Running Main")
     global curPos,lastDir,flag,curDest,curDir,cycle_num_max,cycle_count,next_run_datetime,current_datetime,next_cmd_chk_run
+<<<<<<< HEAD
     next_run_datetime=datetime.datetime.now()#(datetime.datetime.now() + datetime.timedelta(hours=numInterval_Hours))#minutes=numInterval_Hours))#   
     updateRunTime(next_run_datetime)
     logAndPrint(logging.info,"First time update for next run time")
+=======
+    
+    next_run_datetime=(datetime.datetime.now() + datetime.timedelta(hours=numInterval_Hours))#minutes=numInterval_Hours))#       
+    updateRunTime(next_run_datetime)
+>>>>>>> 1c7f736aa52cdc5f3a20d7060dab43eaaa9f59a7
     
     while (flag):
     
