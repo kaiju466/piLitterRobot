@@ -1,5 +1,7 @@
-from flask import Flask, render_template,jsonify
+from flask import Flask, render_template,jsonify,request
+
 from waveshare import MotorDriver
+from datetime import datetime as dt
 
 import configparser
 import datetime
@@ -27,7 +29,7 @@ Motor = MotorDriver()
 
 current_datetime = datetime.date.today()
 
-next_run_datetime = datetime.datetime(2021, 7, 12, 9, 55, 0, 342380)
+next_run_datetime = datetime.datetime(3021, 7, 12, 9, 55, 0, 342380)
 next_song_run = datetime.datetime(2021, 7, 12, 9, 55, 0, 342380)
 
 curDir = 0  # -1=reverse,0=stopped,1=forward
@@ -61,6 +63,8 @@ def index():
     now = datetime.datetime.now()
     #timeString = now.strftime("%Y-%m-%d %H:%M")
     f = open(logname, "r")
+    log="\n".join(list(reversed(f.read().split("\n"))))
+    #print(log)
     #print(str(direction[curDir]))
 
     templateData = {
@@ -68,7 +72,7 @@ def index():
         'destination': str(places[curDest]),
         'nexttime': str(next_run_datetime),
         'hoursbtwnruns': str(numInterval_Hours),
-        'msglog': f.read()
+        'msglog': log
     }
     #print(templateData)
     return render_template('index.html', **templateData)
@@ -92,7 +96,8 @@ def emergencystop():
     now = datetime.datetime.now()
     #timeString = now.strftime("%Y-%m-%d %H:%M")
     f = open(logname, "r")
-    
+    log="\n".join(list(reversed(f.read().split("\n"))))
+
     Motor.MotorStop(0)
     
     curDir=0
@@ -102,7 +107,7 @@ def emergencystop():
         'destination': str(places[curDest]),
         'nexttime': str(next_run_datetime),
         'hoursbtwnruns': str(numInterval_Hours),
-        'msglog': f.read()
+        'msglog': log
     }
     print(templateData)
     return render_template('index.html', **templateData)
@@ -115,6 +120,7 @@ def manualrun():
     now = datetime.datetime.now()
     #timestring = now.strftime("%Y-%m-%d %H:%M")
     f = open(logname, "r")
+    log="\n".join(list(reversed(f.read().split("\n"))))
 
     next_run_datetime = now
 
@@ -123,7 +129,7 @@ def manualrun():
         'destination': str(places[curDest]),
         'nexttime': str(next_run_datetime),
         'hoursbtwnruns': str(numInterval_Hours),
-        'msglog': f.read()
+        'msglog': log
     }
     #print(templateData)
     return render_template('index.html', **templateData)
@@ -144,11 +150,19 @@ def statusGet():
 @app.route("/status", methods=['POST'])
 def statusPost():
     global next_run_datetime
-    content = request.json
     print("statusPost")
-    print(content["nexttime"])
+    content = request.json
+    
+    #try:
+        #curDir=int(content["direction"])
+    #except:
+        #curDir=curDir
+    
+    print("nexttime to save:"+content["nexttime"])
     next_run_datetime = dt.strptime(str(content["nexttime"]),'%Y-%m-%d %H:%M:%S.%f')
     templateData = {'nexttime': str(next_run_datetime)}
+    print("nexttime saved:"+str(next_run_datetime))
+    
     return jsonify(templateData)
 
 def getipaddress():
@@ -157,6 +171,7 @@ def getipaddress():
     ip_address = s.getsockname()[0]
     s.close()
     return ip_address
+
 
 
 # Title Screen

@@ -377,19 +377,21 @@ def updateRunTime(date_time):
             'nexttime': str(date_time)
             }
     
-    print("Storing Next_Run_Time:"+str(date_time))
+    logAndPrint(logging.info,"Storing Next_Run_Time:"+str(date_time))
     config.set('Schedule','Next_Run_Time',str(date_time))
     try:
         data =requests.post("http://"+ip_address + ":5000/status",json=data)   
+        
     except:
+        logAndPrint(logging.info,"Error on time send")
         data = {
             'nexttime': str(datetime.datetime(2021, 7, 12, 9, 55, 0, 342380))
             }
         
-    print(str(data))
+    logAndPrint(logging.info,str(data))
     #print("Update next_run_datetime with "+str(tempdatetime))
             
-    print("Next_Run_Time Stored")
+    logAndPrint(logging.info,"Next_Run_Time Stored")
     
 def flaskCom():
     global next_cmd_chk_run,next_run_datetime
@@ -398,22 +400,23 @@ def flaskCom():
         next_cmd_chk_run=(datetime.datetime.now() + datetime.timedelta(seconds=60))#minutes=numInterval_Hours))#
             
         try:
-            response = requests.get("http://"+ipaddress + ":5000/status")  # api_url)
-            #print(response.json())
+            response = requests.get("http://"+ip_address + ":5000/status")  # api_url)
             data = response.json()  # json.load(response.json())#need to test this piece
         except:
+            print("Error on FlaskCom")
             data = {
             'direction': -1,
             'destination': -1,
-            'nexttime': str(datetime.datetime(2021, 7, 12, 9, 55, 0, 342380)),
+            'nexttime': str(datetime.datetime(3021, 7, 12, 9, 55, 0, 342380)),
             'hoursbtwnruns': ''
             }
-            tempdatetime=dt.strptime(data["nexttime"],'%Y-%m-%d %H:%M:%S.%f')
+        tempdatetime=dt.strptime(data["nexttime"],'%Y-%m-%d %H:%M:%S.%f')
         #20160101>20130101
-        
+        #print(str(next_run_datetime)+" "+str(tempdatetime))
         if next_run_datetime > tempdatetime:
-            print("Update next_run_datetime with "+str(tempdatetime))
+            logAndPrint(logging.info,"Update next_run_datetime with "+str(tempdatetime))
             next_run_datetime=tempdatetime
+            #return next_run_datetime
             #print("Update next_run_datetime:" + str(tempdatetime) +"from "+str(next_run_datetime))
             #data["nexttime"]=
             #requests.post("http://"+ipaddress + ":5000/status",json=data)   
@@ -445,25 +448,30 @@ def main(ipaddress):
     #main
     print("Running Main")
     global curPos,lastDir,flag,curDest,curDir,cycle_num_max,cycle_count,next_run_datetime,current_datetime,next_cmd_chk_run
+    next_run_datetime=datetime.datetime.now()#(datetime.datetime.now() + datetime.timedelta(hours=numInterval_Hours))#minutes=numInterval_Hours))#   
     updateRunTime(next_run_datetime)
+    logAndPrint(logging.info,"First time update for next run time")
+    
     while (flag):
     
         #logAndPrint(logging.info,"Next run date/time:"+str(next_run_datetime))
         current_datetime=datetime.datetime.now()
-        
-        flaskCom()
+        if curDir==0:
+            flaskCom()
         
         #logAndPrint(logging.info,"motor direction:"+str(curDir))
+        #print(logging.info,str(current_datetime)+" "+str(next_run_datetime))
         if current_datetime>=next_run_datetime and cycle_count<=cycle_num_max and curDir==0:
+            logAndPrint(logging.info,str(current_datetime)+" "+str(next_run_datetime)+" "+str(current_datetime>=next_run_datetime))
             
             if cycle_count>1:
                 logAndPrint(logging.info,"Time to clean the litter!")#logAndPrint(logging.info,"Time to clean the litter!")
                 
-            logAndPrint(logging.iwithnfo,"Current run date/time:"+str(current_datetime))
+            logAndPrint(logging.info,"Current run date/time:"+str(current_datetime))
             #logAndPrint(logging.info,"motor direction:"+str(curDir))
             next_run_datetime=(datetime.datetime.now() + datetime.timedelta(hours=numInterval_Hours))#minutes=numInterval_Hours))#
             updateRunTime(next_run_datetime)
-            
+            logAndPrint(logging.info,"Next run time update continued")
             if (cycle_count+1)<=cycle_num_max:
                 logAndPrint(logging.info,"Next run date/time:"+str(next_run_datetime))
             
