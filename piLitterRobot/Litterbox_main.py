@@ -452,6 +452,7 @@ def main(ipaddress):
     updateRunTime(next_run_datetime)
     logAndPrint(logging.info,"First time update for next run time")
     
+    global curPos,lastDir,flag,curDest,curDir,cycle_num_max,cycle_count,next_run_datetime,current_datetime
     while (flag):
     
         #logAndPrint(logging.info,"Next run date/time:"+str(next_run_datetime))
