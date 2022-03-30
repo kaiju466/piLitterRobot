@@ -2,12 +2,13 @@
 Code for basic integration of Raspberry Pi into Litter-Robot 3 using a GeekWorm Pi MotorHat
 
 Parts list:
-  Raspberry Pi 3b(any pi with a gpio should potentially work though weak hardware will be slow)
-  LitterRobot3
-  12V powersupply (or original Litter-Robot 3 powersupply)
-  5V powersupply or voltage transformer(can use a dedicated supply or modify a carlighter usb adaptor)
-  3144E A3144 KY-003 HallEffect Sensors(2)
-  GeekWorm PiMotorHat
+- Raspberry Pi 3b(any pi with a gpio should potentially work though weak hardware will be slow)
+- LitterRobot3
+- 12V powersupply (or original Litter-Robot 3 powersupply)
+- 5V powersupply or voltage transformer(can use a dedicated supply or modify a carlighter usb adaptor). 
+  - Note: Not required when using Waveshare PI motor hat
+- 3144E A3144 KY-003 HallEffect Sensors(2)
+- GeekWorm PiMotorHat or Waveshare PI motor hat
  
  
 Implementation:
