@@ -1,5 +1,5 @@
 # piLitterRobot
-Code for basic integration of Raspberry Pi into Litter-Robot 3 using a GeekWorm Pi MotorHat
+Code for basic integration of Raspberry Pi into Litter-Robot 3 using a GeekWorm or Waveshare Pi MotorHat
 
 Parts list:
 - Raspberry Pi 3b(any pi with a gpio should potentially work though weak hardware will be slow)
